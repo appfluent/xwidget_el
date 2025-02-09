@@ -1,0 +1,15 @@
+publish_to: 'none'
+
+name: xwidget_el_example
+description: Example usage
+version: 0.1.0
+
+environment:
+  sdk: ">=2.19.6 <4.0.0"
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  xwidget_el:
+    path: ../
