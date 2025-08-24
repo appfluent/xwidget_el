@@ -55,23 +55,16 @@ class ELParser {
 }
 
 class ELParserDefinition extends ELGrammarDefinition {
-  late final Parser _parser;
+  late Parser _parser;
 
   @override
-  Parser<T> build<T>({
-    @Deprecated("Use 'buildFrom(parser)'") Function? start,
-    @Deprecated("Use 'buildFrom(parser)'") List<Object> arguments = const []
-  }) {
-    if (start != null || arguments.isNotEmpty) {
-      throw Exception("Build arguments 'start' and 'arguments' not used. Use "
-          "'buildFrom(parser)' instead.");
-    }
-    return _parser = super.build<T>();
+  Parser build() {
+    return _parser = super.build();
   }
 
   @override
   Parser<T> buildFrom<T>(Parser<T> parser) {
-    return _parser = buildFrom<T>(parser);
+    return _parser = super.buildFrom<T>(parser);
   }
 
   @override
