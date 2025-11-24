@@ -13,13 +13,13 @@ import 'brackets.dart';
 
 part 'transform.dart';
 
-_registerType<T>() {
+void _registerType<T>() {
   TypePlus.add<T>();
   TypePlus.addFactory(<T>(f) => f<List<T>>());
   TypePlus.addFactory(<T>(f) => f<Set<T>>());
 }
 
-_autoRegisterType<T>() {
+void _autoRegisterType<T>() {
   if (T.id.isEmpty) {
     if (!T.toString().contains("<")) {
       _registerType<T>();
@@ -76,7 +76,7 @@ class Models {
     return _keyTransformers[nonNullType(type)];
   }
 
-  static register<T extends Model>(
+  static void register<T extends Model>(
     ModelFactory<T> factory,
     List<PropertyTransformer>? transformers
   ) {
@@ -178,7 +178,7 @@ class Model extends MapBase<String, dynamic> {
     );
   }
 
-  static clearInstances<T>([String? key]) {
+  static void clearInstances<T>([String? key]) {
     final typed = _instances[nonNullType(T)];
     if (typed != null) {
       if (key != null) {

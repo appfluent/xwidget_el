@@ -5,7 +5,7 @@ typedef TypeConverter<T> = T? Function(dynamic value);
 class TypeConverters {
   static final _functions = _predefinedFunctions();
 
-  static register<T>(TypeConverter<T> function) {
+  static void register<T>(TypeConverter<T> function) {
     _registerType<T>();
     _functions[nonNullType(T)] = function;
   }
@@ -142,7 +142,9 @@ class PropertyTranslation {
       for (final srcPath in srcPaths) {
         if (e.key == srcPath ||
             e.key.startsWith("$srcPath.") ||
-            e.key.startsWith("$srcPath[")) return false;
+            e.key.startsWith("$srcPath[")) {
+          return false;
+        }
       }
       return true;
     }));

@@ -5,7 +5,7 @@ import 'package:xwidget_el/src/model/model.dart';
 import 'package:xwidget_el/src/parser.dart';
 
 
-main() {
+void main() {
   final parser = ELParser();
   final dependencies = Dependencies({
     "person": Person("Mike", "Jones"),

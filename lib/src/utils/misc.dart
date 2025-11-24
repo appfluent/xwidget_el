@@ -7,7 +7,9 @@ import 'package:intl/intl.dart';
 import 'converters.dart';
 import 'extensions.dart';
 
-
+/// Units of time used for duration formatting.
+///
+/// Each unit has a short [code] and its equivalent in [millis].
 enum DurationUnits {
   days("d", 86400000),
   hours("h", 3600000),
@@ -20,6 +22,9 @@ enum DurationUnits {
   const DurationUnits(this.code, this.millis);
 }
 
+/// Defines labels for formatting durations.
+///
+/// Provides human‑readable labels for each [DurationUnits].
 class DurationFormat {
   final String days;
   final String hours;
@@ -35,6 +40,7 @@ class DurationFormat {
     this.milliseconds
   );
 
+  /// Returns the label string corresponding to the given [unit].
   String getLabel(DurationUnits unit) {
     switch (unit) {
       case DurationUnits.days: return days;
@@ -46,8 +52,14 @@ class DurationFormat {
   }
 }
 
+/// Default duration format with English labels.
 const defaultDurationFormat = DurationFormat(" d"," hr"," min"," sec"," ms");
 
+/// Performs a deep equality comparison between [obj1] and [obj2].
+///
+/// - Supports `Map`, `List`, `Set`, and primitive types.
+/// - Recursively compares nested collections.
+/// - Returns `true` if structures and values are equal, otherwise `false`.
 bool deepEquals(dynamic obj1, dynamic obj2) {
   if (identical(obj1, obj2)) return true;
   if (obj1.runtimeType != obj2.runtimeType) return false;
@@ -81,6 +93,11 @@ bool deepEquals(dynamic obj1, dynamic obj2) {
   }
 }
 
+/// Computes a deep hash code for [value].
+///
+/// - Supports `Map`, `List`, `Set`, and primitive types.
+/// - Recursively combines hash codes of nested structures.
+/// - Useful for consistent hashing of complex objects.
 int deepHashCode(dynamic value) {
   if (value is Map) {
     // Compute hash code for maps
@@ -113,11 +130,19 @@ int deepHashCode(dynamic value) {
   }
 }
 
+/// Returns the absolute difference between two [DateTime]s.
+///
+/// Always returns a non‑negative [Duration].
 Duration diffDateTime(DateTime left, DateTime right) {
   final diff = left.difference(right);
   return (diff < const Duration(microseconds: 0)) ? (-diff) : diff;
 }
 
+/// Returns the first element of [value].
+///
+/// - Supports `List`, `Map`, and `Set`.
+/// - For maps, returns the first entry.
+/// - Throws [Exception] if [value] is not a supported type.
 dynamic first(dynamic value) {
   if (value is List) return value.first;
   if (value is Map) return value.first();
@@ -126,12 +151,23 @@ dynamic first(dynamic value) {
       "'${value.runtimeType}'. Valid types are List, Map, and Set.");
 }
 
+/// Formats a [DateTime] value using the given [format] pattern.
+///
+/// - Accepts `DateTime`, `int` (milliseconds since epoch), or `String`.
+/// - Returns `null` if [value] is `null`.
+/// - Uses [intl.DateFormat] for formatting.
 String? formatDateTime(String format, dynamic value) {
   if (value == null) return null;
   final dateTime = toDateTime(value);
   return dateTime != null ? DateFormat(format).format(dateTime) : null;
 }
 
+/// Formats a [Duration] into a human‑readable string.
+///
+/// - [precision] determines the smallest unit to include (e.g., `"s"`, `"ms"`).
+/// - [format] provides labels; if `null`, outputs colon/dot‑delimited style.
+/// - Returns `null` if [value] is `null`.
+/// - Handles negative durations by prefixing with `-`.
 String? formatDuration(
     Duration? value, [
     String precision = "s",
@@ -164,6 +200,11 @@ String? formatDuration(
   return value.isNegative ? "-$formatted" : formatted;
 }
 
+/// Returns the last element of [value].
+///
+/// - Supports `List`, `Map`, and `Set`.
+/// - For maps, returns the last entry.
+/// - Throws [Exception] if [value] is not a supported type.
 dynamic last(dynamic value) {
   if (value is List) return value.last;
   if (value is Map) return value.last();
@@ -172,6 +213,10 @@ dynamic last(dynamic value) {
       "'${value.runtimeType}'. Valid types are List, Map, and Set.");
 }
 
+/// Returns the length of [value].
+///
+/// - Supports `String`, `List`, `Map`, and `Set`.
+/// - Throws [Exception] if [value] is not a supported type.
 int length(dynamic value) {
   if (value is String) return value.length;
   if (value is List) return value.length;
@@ -181,6 +226,10 @@ int length(dynamic value) {
       "'${value.runtimeType}'. Valid types are String, List, Map, and Set.");
 }
 
+/// Compares two maps [a] and [b] for shallow equality.
+///
+/// - Returns `true` if both maps have the same keys and values.
+/// - Does not perform deep comparison of nested structures.
 bool mapsEqual(Map a, Map b) {
   if (a.length != b.length) {
     return false;
@@ -193,28 +242,43 @@ bool mapsEqual(Map a, Map b) {
   return true;
 }
 
+/// Replaces all substrings in [value] that match [regExp] with [replacement].
+///
+/// - Returns `null` if [value] is `null`.
 String? replaceAll(String? value, String regExp, String replacement) {
   if (value == null) return null;
   final regex = RegExp(regExp);
   return value.replaceAll(regex, replacement);
 }
 
+/// Replaces the first substring in [value] that matches [regExp] with [replacement].
+///
+/// - Starts searching at [startIndex].
+/// - Returns `null` if [value] is `null`.
 String? replaceFirst(String? value, String regExp, String replacement, [int startIndex = 0]) {
   if (value == null) return null;
   final regex = RegExp(regExp);
   return value.replaceFirst(regex, replacement, startIndex);
 }
 
+/// Returns the [Type] of generic parameter [T].
 Type typeOf<T>() {
   return T;
 }
 
+/// Returns a substring of [value] from [start] to [end].
+///
+/// - If [end] is `-1` or greater than the string length, uses the full length.
+/// - Returns `null` if [value] is `null`.
 String? substring(String? value, int start, [int end = -1]) {
   if (value == null) return null;
   final maxEnd = value.length;
   return value.substring(start, end > 0 && end <= maxEnd ? end : maxEnd);
 }
 
+/// Returns the non‑nullable form of a [Type].
+///
+/// - Removes a trailing `?` from the type’s string representation.
 String nonNullType(Type type) {
   final typeString = type.toString();
   return typeString.endsWith("?")
@@ -222,6 +286,12 @@ String nonNullType(Type type) {
       : typeString;
 }
 
+/// Returns the current UTC [DateTime].
+///
+/// Equivalent to:
+/// ```dart
+/// DateTime.fromMicrosecondsSinceEpoch(microsecondsSinceEpoch, isUtc: true)
+/// ```
 DateTime now() => DateTime.now();
 
 /// Returns this DateTime value in the UTC time zone.

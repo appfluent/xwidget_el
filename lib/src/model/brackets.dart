@@ -9,8 +9,8 @@ import 'model.dart';
 /// notation to locate any piece of data in your hierarchy. Searches return null
 /// if no data is found or if the path string is invalid.
 ///
-/// 1. Objects must be represented as <String, dynamic> maps.
-/// 2. Array data must use <dynamic> lists.
+/// 1. Objects must be represented as `<String, dynamic>` maps.
+/// 2. Array data must use `<dynamic>` lists.
 /// 3. Map keys may only contain upper/lower case letters, numbers and the
 ///    underscore.
 /// 4. Array indexes must be int parsable numbers.
@@ -218,7 +218,7 @@ class PathResolution {
     return PathResolution._(path, null, null);
   }
 
-  _notifyParents() {
+  void _notifyParents() {
     PathResolution? currResolution = this;
     while (currResolution != null) {
       final currData = currResolution.data;

@@ -5,7 +5,7 @@ import 'package:xwidget_el/xwidget_el.dart';
 import '../testing_utils.dart';
 
 
-main() {
+void main() {
 
   test('Assert setValue', () {
     final data = <String, dynamic>{};
@@ -192,8 +192,6 @@ main() {
     final profileNotifier = model.listenForChanges("profile", null, null);
     profileNotifier.addListener(() => profileChanged++);
     model.setValue("profile.emails[2]", "3@example.com");
-
-    print(profileChanged);
   });
 
   test('Assert hasPath returns TRUE when map path exists', () {

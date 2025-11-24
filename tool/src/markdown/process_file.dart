@@ -12,6 +12,7 @@ const usageHint = "<!-- This file was generated. "
     "to update this file. -->";
 
 extension on FileSystemEntity {
+  // ignore: unused_element
   bool get isMarkdownFile => this is File && path.toLowerCase().endsWith('.md');
 }
 

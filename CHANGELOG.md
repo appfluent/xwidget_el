@@ -1,3 +1,8 @@
+## 0.2.1
+
+* Resolved code linting warnings
+* Expanded developer documentation throughout the codebase
+
 ## 0.2.0
 
 * Updated petitparser dependency to ^7.0.1

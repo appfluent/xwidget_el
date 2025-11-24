@@ -8,7 +8,7 @@ import 'package:xwidget_el/src/expressions/subtraction.dart';
 import 'package:xwidget_el/xwidget_el.dart';
 
 
-main() {
+void main() {
 
   // addition
   final dependencies = Dependencies();

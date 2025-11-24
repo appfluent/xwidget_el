@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:xwidget_el/src/model/brackets.dart';
 
 
-main() {
+void main() {
 
   test('Assert setValue is fast', () {
     final data = <String, dynamic>{};

@@ -4,7 +4,7 @@ import 'package:xwidget_el/xwidget_el.dart';
 import '../testing_utils.dart';
 
 
-main() {
+void main() {
 
   setUpAll(() {
     Models.register<Profile>(Profile.import, const [

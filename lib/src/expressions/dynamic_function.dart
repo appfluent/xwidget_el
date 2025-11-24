@@ -16,6 +16,18 @@ final _logger = Logger(
   ),
 );
 
+/// Resolves a dynamic function by [name] from the global registry or [dependencies].
+///
+/// - Matches against a predefined set of built‑in functions (math, converters,
+///   validators, misc utilities).
+/// - If no built‑in match is found, attempts to resolve from [dependencies].
+/// - Throws [Exception] if the function cannot be found.
+///
+/// Example:
+/// ```dart
+/// final func = getDynamicFunction("abs", deps);
+/// print(func(-5)); // -> 5
+/// ```
 Function getDynamicFunction(String name, Dependencies dependencies) {
   switch (name) {
     // please maintain alphabetical order
@@ -84,6 +96,19 @@ Function getDynamicFunction(String name, Dependencies dependencies) {
   throw Exception("Function '$name' not found.");
 }
 
+/// Resolves a dynamic function by [name] on a given [source] object.
+///
+/// - If [source] is a [Map], looks up the function by key.
+/// - Otherwise, attempts to resolve against known methods of the source type
+///   (e.g., `String`, `List`, `Set`, `num`).
+/// - Returns a callable function or closure wrapping the property.
+/// - Throws [Exception] if the function cannot be found.
+///
+/// Example:
+/// ```dart
+/// final func = getDynamicFunctionOn("toUpperCase", "hello");
+/// print(func()); // -> "HELLO"
+/// ```
 Function getDynamicFunctionOn(String name, dynamic source) {
   if (source != null) {
     if (source is Map) {
@@ -153,6 +178,22 @@ Function getDynamicFunctionOn(String name, dynamic source) {
   throw Exception("Function '$name' not found.");
 }
 
+/// Expression that evaluates another expression string dynamically.
+///
+/// Wraps an inner [expression] that produces a string, then parses and
+/// evaluates that string using the provided [parser].
+///
+/// Evaluation rules:
+/// - Evaluates [expression] to a string.
+/// - Parses the string with [parser].
+/// - If parsing succeeds, evaluates the resulting expression tree.
+/// - Throws [Exception] if parsing fails.
+///
+/// Example:
+/// ```dart
+/// final expr = EvalFunction(ConstantExpression("1 + 2"), parser);
+/// print(expr.evaluate(deps)); // -> 3
+/// ```
 class EvalFunction extends Expression<dynamic> {
   final Expression expression;
   final Parser parser;
@@ -176,6 +217,21 @@ class EvalFunction extends Expression<dynamic> {
   }
 }
 
+/// Represents a dynamic function call in the expression language.
+///
+/// Supports both global functions (via [getDynamicFunction]) and
+/// instance methods (via [getDynamicFunctionOn]).
+///
+/// Evaluation rules:
+/// - Resolves the function by [name] from either global registry or [source].
+/// - Evaluates any [positionalArgs] before invocation.
+/// - Invokes the function using [Function.apply].
+///
+/// Example:
+/// ```dart
+/// final expr = DynamicFunction("abs", null, [ConstantExpression(-5)]);
+/// print(expr.evaluate(deps)); // -> 5
+/// ```
 class DynamicFunction extends Expression<dynamic> {
   final String name;
   final dynamic source;

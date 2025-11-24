@@ -1,6 +1,36 @@
 import '../dependencies.dart';
 import 'expression.dart';
 
+/// Represents a subtraction (`-`) operation in the expression language.
+///
+/// Supports subtraction between numeric values and special handling for
+/// subtracting a [Duration] from a [DateTime].
+///
+/// Evaluation rules:
+/// - If both operands evaluate to `null`, returns `null`.
+/// - If the left operand is `null` and the right is non‑null, returns the right
+///   operand (though this may be reconsidered — see TODO).
+/// - If the right operand is `null` and the left is non‑null, returns the left operand.
+/// - If the left operand is a [DateTime] and the right operand is a [Duration],
+///   returns a new [DateTime] shifted backwards by the duration.
+/// - Otherwise, attempts to apply the `-` operator to the evaluated values.
+/// - Throws an [Exception] if the `-` operator is not applicable to the
+///   operand types.
+///
+/// Example:
+/// ```dart
+/// final expr = SubtractionExpression(
+///   ConstantExpression<int>(10),
+///   ConstantExpression<int>(3),
+/// );
+/// print(expr.evaluate(dependencies)); // -> 7
+///
+/// final dateExpr = SubtractionExpression(
+///   ConstantExpression<DateTime>(DateTime.utc(2025, 1, 10)),
+///   ConstantExpression<Duration>(Duration(days: 5)),
+/// );
+/// print(dateExpr.evaluate(dependencies)); // -> DateTime.utc(2025, 1, 5)
+/// ```
 class SubtractionExpression extends Expression<dynamic> {
   final dynamic left;
   final dynamic right;

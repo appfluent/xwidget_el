@@ -14,6 +14,15 @@ import 'parsers.dart';
  const millisMins = 60000;
  const millisSecs = 1000;
 
+/// Converts a dynamic [value] to a [bool].
+///
+/// - Accepts `bool`, `int`, `double`, or `String`.
+/// - Integers and doubles are treated as `true` if non‑zero.
+/// - Strings are parsed via [parseBool].
+/// - If [trueValues] or [falseValues] are provided, membership in those sets
+///   determines the result.
+/// - Returns `null` if [value] is `null`.
+/// - Throws [Exception] if conversion fails.
 bool? toBool(
   dynamic value, [
   Set<dynamic>? trueValues,
@@ -31,6 +40,11 @@ bool? toBool(
   throw Exception("Invalid bool value: $value");
 }
 
+/// Converts a dynamic [value] to a [Color].
+///
+/// - Accepts `int` (ARGB integer) or `String` (parsed via [parseColor]).
+/// - Returns `null` if [value] is `null`.
+/// - Throws [Exception] if conversion fails.
 Color? toColor(dynamic value) {
   if (value == null) return null;
   if (value is int) return Color(value);
@@ -38,6 +52,12 @@ Color? toColor(dynamic value) {
   throw Exception("Invalid Color value: $value");
 }
 
+/// Converts a dynamic [value] to a [DateTime].
+///
+/// - Accepts `DateTime`, `int` (milliseconds since epoch), or `String`
+///   (parsed via [parseDateTime]).
+/// - Returns `null` if [value] is `null`.
+/// - Throws [Exception] if conversion fails.
 DateTime? toDateTime(dynamic value) {
   if (value == null) return null;
   if (value is DateTime) return value;
@@ -47,6 +67,11 @@ DateTime? toDateTime(dynamic value) {
       "type=${value.runtimeType}");
 }
 
+/// Converts a dynamic [value] to an integer representing days.
+///
+/// - Accepts `int`, `Duration`, `String` (parsed to [DateTime]), or [DateTime].
+/// - Returns `null` if [value] is `null`.
+/// - Throws [Exception] if conversion fails.
 int? toDays(dynamic value) {
   if (value == null) return null;
   if (value is int) return value;
@@ -58,6 +83,11 @@ int? toDays(dynamic value) {
   throw Exception('Cannot convert ${value.runtimeType} to int: $value');
 }
 
+/// Converts a dynamic [value] to an integer representing days.
+///
+/// - Accepts `int`, `Duration`, `String` (parsed to [DateTime]), or [DateTime].
+/// - Returns `null` if [value] is `null`.
+/// - Throws [Exception] if conversion fails.
 double? toDouble(dynamic value) {
   if (value == null) return null;
   if (value is double) return value;
@@ -66,6 +96,13 @@ double? toDouble(dynamic value) {
   throw Exception('Invalid double value: $value');
 }
 
+/// Converts a dynamic [value] to a [Duration].
+///
+/// - Accepts `Duration`, `String` (parsed via [parseDuration]), or `int`.
+/// - If [intUnit] is provided, interprets the integer as days (`d`), hours (`h`),
+///   minutes (`M`), or seconds (`s`). Defaults to milliseconds.
+/// - Returns `null` if [value] is `null`.
+/// - Throws [Exception] if conversion fails.
 Duration? toDuration(dynamic value, [String? intUnit]) {
   if (value == null) return null;
   if (value is Duration) return value;
@@ -86,6 +123,11 @@ Duration? toDuration(dynamic value, [String? intUnit]) {
   throw Exception("Invalid duration format: $value");
 }
 
+/// Converts a dynamic [value] to an enum constant of type [T].
+///
+/// - Accepts an enum value of type [T] or a `String` (parsed via [parseEnum]).
+/// - Returns `null` if [value] is `null`.
+/// - Throws [Exception] if [value] does not match any enum constant.
 T? toEnum<T extends Enum>(dynamic value, List<T> values) {
   if (value == null) return null;
   if (value is T) return value;
@@ -94,6 +136,11 @@ T? toEnum<T extends Enum>(dynamic value, List<T> values) {
       "Valid values are ${values.asNameMap().keys}");
 }
 
+/// Converts a dynamic [value] to an integer representing hours.
+///
+/// - Accepts `int`, `Duration`, `String` (parsed to [DateTime]), or [DateTime].
+/// - Returns `null` if [value] is `null`.
+/// - Throws [Exception] if conversion fails.
 int? toHours(dynamic value) {
   if (value == null) return null;
   if (value is int) return value;
@@ -105,16 +152,28 @@ int? toHours(dynamic value) {
   throw Exception('Cannot convert ${value.runtimeType} to int: $value');
 }
 
+/// Converts a dynamic [value] to an [int].
+///
+/// - Accepts `int`, `double`, `bool`, `String` (parsed via [parseInt]), or [Color].
+/// - Booleans map to `1` (true) or `0` (false).
+/// - Colors are converted via [Color.toARGB32].
+/// - Returns `null` if [value] is `null`.
+/// - Throws [Exception] if conversion fails.
 int? toInt(dynamic value) {
   if (value == null) return null;
   if (value is int) return value;
   if (value is double) return value.toInt();
   if (value is bool) return value ? 1 : 0;
   if (value is String) return parseInt(value);
-  if (value is Color) return value.value;
+  if (value is Color) return value.toARGB32();
   return throw Exception('Invalid int value: $value');
 }
 
+/// Converts a dynamic [value] to an integer representing milliseconds.
+///
+/// - Accepts `int`, `Duration`, `String` (parsed to [DateTime]), or [DateTime].
+/// - Returns `null` if [value] is `null`.
+/// - Throws [Exception] if conversion fails.
 int? toMillis(dynamic value) {
   if (value == null) return null;
   if (value is int) return value;
@@ -126,6 +185,11 @@ int? toMillis(dynamic value) {
   throw Exception('Cannot convert ${value.runtimeType} to int: $value');
 }
 
+/// Converts a dynamic [value] to an integer representing minutes.
+///
+/// - Accepts `int`, `Duration`, `String` (parsed to [DateTime]), or [DateTime].
+/// - Returns `null` if [value] is `null`.
+/// - Throws [Exception] if conversion fails.
 int? toMinutes(dynamic value) {
   if (value == null) return null;
   if (value is int) return value;
@@ -137,6 +201,11 @@ int? toMinutes(dynamic value) {
   throw Exception('Cannot convert ${value.runtimeType} to int: $value');
 }
 
+/// Converts a dynamic [value] to an integer representing seconds.
+///
+/// - Accepts `int`, `Duration`, `String` (parsed to [DateTime]), or [DateTime].
+/// - Returns `null` if [value] is `null`.
+/// - Throws [Exception] if conversion fails.
 int? toSeconds(dynamic value) {
   if (value == null) return null;
   if (value is int) return value;
@@ -148,10 +217,15 @@ int? toSeconds(dynamic value) {
   throw Exception('Cannot convert ${value.runtimeType} to int: $value');
 }
 
+/// Converts a dynamic [value] to a [String].
+///
+/// - Returns `null` if [value] is `null`.
+/// - Colors are formatted as uppercase ARGB hex strings (`0xAARRGGBB`).
+/// - Other values use their `toString()` representation.
 String? toString(dynamic value) {
   if (value == null) return null;
   if (value is Color) {
-    return "0x${value.value
+    return "0x${value.toARGB32()
         .toRadixString(16)
         .toUpperCase()
         .padLeft(8, "0")}";
@@ -165,6 +239,8 @@ String? toString(dynamic value) {
 // They don't throw exceptions if conversion fails.
 //=================================================
 
+/// Attempts to convert [value] to a bool.
+/// Returns `null` instead of throwing if conversion fails.
 bool? tryToBool(dynamic value) {
   try {
     return toBool(value);
@@ -174,6 +250,8 @@ bool? tryToBool(dynamic value) {
   }
 }
 
+/// Attempts to convert [value] to a Color.
+/// Returns `null` instead of throwing if conversion fails.
 Color? tryToColor(dynamic value) {
   try {
     return toColor(value);
@@ -183,6 +261,8 @@ Color? tryToColor(dynamic value) {
   }
 }
 
+/// Attempts to convert [value] to a DateTime.
+/// Returns `null` instead of throwing if conversion fails.
 DateTime? tryToDateTime(dynamic value) {
   try {
     return toDateTime(value);
@@ -192,6 +272,8 @@ DateTime? tryToDateTime(dynamic value) {
   }
 }
 
+/// Attempts to convert [value] to days.
+/// Returns `null` instead of throwing if conversion fails.
 int? tryToDays(dynamic value) {
   try {
     return toDays(value);
@@ -201,6 +283,8 @@ int? tryToDays(dynamic value) {
   }
 }
 
+/// Attempts to convert [value] to a double.
+/// Returns `null` instead of throwing if conversion fails.
 double? tryToDouble(dynamic value) {
   try {
     return toDouble(value);
@@ -210,6 +294,8 @@ double? tryToDouble(dynamic value) {
   }
 }
 
+/// Attempts to convert [value] to a Duration.
+/// Returns `null` instead of throwing if conversion fails.
 Duration? tryToDuration(dynamic value, [String? unit]) {
   try {
     return toDuration(value, unit);
@@ -219,6 +305,8 @@ Duration? tryToDuration(dynamic value, [String? unit]) {
   }
 }
 
+/// Attempts to convert [value] to an enum constant of type [T].
+/// Returns `null` instead of throwing if conversion fails.
 T? tryToEnum<T extends Enum>(List<T> values, dynamic value) {
   try {
     return toEnum(values, value);
@@ -228,6 +316,8 @@ T? tryToEnum<T extends Enum>(List<T> values, dynamic value) {
   }
 }
 
+/// Attempts to convert [value] to hours.
+/// Returns `null` instead of throwing if conversion fails.
 int? tryToHours(dynamic value) {
   try {
     return toHours(value);
@@ -237,6 +327,8 @@ int? tryToHours(dynamic value) {
   }
 }
 
+/// Attempts to convert [value] to an int.
+/// Returns `null` instead of throwing if conversion fails.
 int? tryToInt(dynamic value) {
   try {
     return toInt(value);
@@ -246,6 +338,8 @@ int? tryToInt(dynamic value) {
   }
 }
 
+/// Attempts to convert [value] to milliseconds.
+/// Returns `null` instead of throwing if conversion fails.
 int? tryToMillis(dynamic value) {
   try {
     return toMillis(value);
@@ -255,6 +349,8 @@ int? tryToMillis(dynamic value) {
   }
 }
 
+/// Attempts to convert [value] to minutes.
+/// Returns `null` instead of throwing if conversion fails.
 int? tryToMinutes(dynamic value) {
   try {
     return toMinutes(value);
@@ -264,6 +360,8 @@ int? tryToMinutes(dynamic value) {
   }
 }
 
+/// Attempts to convert [value] to seconds.
+/// Returns `null` instead of throwing if conversion fails.
 int? tryToSeconds(dynamic value) {
   try {
     return toSeconds(value);

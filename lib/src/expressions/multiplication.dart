@@ -1,6 +1,34 @@
 import '../dependencies.dart';
 import 'expression.dart';
 
+/// Represents a multiplication (`*`) operation in the expression language.
+///
+/// Supports multiplication between numeric values and special handling for
+/// multiplying a [Duration] by a numeric factor.
+///
+/// Evaluation rules:
+/// - If both operands evaluate to `null`, returns `null`.
+/// - If one operand is `null` and the other is non‑null, throws an [Exception].
+/// - If the left operand is a [num] and the right operand is a [Duration],
+///   returns a new [Duration] scaled by the numeric factor.
+/// - Otherwise, attempts to apply the `*` operator to the evaluated values.
+/// - Throws an [Exception] if the `*` operator is not applicable to the
+///   operand types.
+///
+/// Example:
+/// ```dart
+/// final expr = MultiplicationExpression(
+///   ConstantExpression<int>(6),
+///   ConstantExpression<int>(7),
+/// );
+/// print(expr.evaluate(dependencies)); // -> 42
+///
+/// final durationExpr = MultiplicationExpression(
+///   ConstantExpression<int>(2),
+///   ConstantExpression<Duration>(Duration(hours: 1)),
+/// );
+/// print(durationExpr.evaluate(dependencies)); // -> Duration(hours: 2)
+/// ```
 class MultiplicationExpression extends Expression<dynamic> {
   final dynamic left;
   final dynamic right;
