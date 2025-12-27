@@ -1,3 +1,7 @@
+## 0.2.2
+
+* Changed logging package from `logger` to `logging`.
+
 ## 0.2.1
 
 * Resolved code linting warnings

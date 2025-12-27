@@ -1,4 +1,4 @@
-import 'package:logger/logger.dart';
+import 'package:logging/logging.dart';
 import 'package:petitparser/core.dart';
 
 import '../dependencies.dart';
@@ -8,13 +8,7 @@ import '../utils/misc.dart';
 import '../utils/validators.dart';
 import 'expression.dart';
 
-final _logger = Logger(
-  printer: PrettyPrinter(
-    methodCount: 0,
-    printEmojis: false,
-    noBoxingByDefault: true,
-  ),
-);
+final _log = Logger("DynamicFunction");
 
 /// Resolves a dynamic function by [name] from the global registry or [dependencies].
 ///
@@ -52,7 +46,7 @@ Function getDynamicFunction(String name, Dependencies dependencies) {
     case "isTrue": return isTrue;
     case "isTrueOrNull": return isTrueOrNull;
     case "length": return length;
-    case "logDebug": return _logger.d;
+    case "logDebug": return _log.fine;
     case "matches": return matches;
     case "now": return now;
     case "nowUtc": return nowUtc;
