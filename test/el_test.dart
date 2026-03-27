@@ -38,6 +38,7 @@ void main() {
   });
 
   test('Assert error global reference parsing', () {
+    // this is supposed to fail because 123 is not a valid identifier
     final result = parser.parse('global.users[indexes[2]].123.name');
     expect(result.value.evaluate(dependencies), "Sally");
   });

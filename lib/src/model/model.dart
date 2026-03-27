@@ -15,8 +15,8 @@ part 'transform.dart';
 
 void _registerType<T>() {
   TypePlus.add<T>();
-  TypePlus.addFactory(<T>(f) => f<List<T>>());
-  TypePlus.addFactory(<T>(f) => f<Set<T>>());
+  TypePlus.addFactory((f) => f<List<T>>());
+  TypePlus.addFactory((f) => f<Set<T>>());
 }
 
 void _autoRegisterType<T>() {

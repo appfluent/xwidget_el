@@ -146,7 +146,7 @@ Function getDynamicFunctionOn(String name, dynamic source) {
       case "replaceFirst": return source.replaceFirst;
       case "replaceRange": return source.replaceRange;
       case "round": return source.round;
-      case "runtimeType": return () => source.runtimetype;
+      case "runtimeType": return () => source.runtimeType;
       case "shuffle": return source.shuffle;
       case "single": return () => source.single;
       case "split": return source.split;
@@ -166,7 +166,7 @@ Function getDynamicFunctionOn(String name, dynamic source) {
       case "trimRight": return source.trimRight;
       case "truncate": return source.truncate;
       case "union": return source.union;
-      case "values": () => source.values;
+      case "values": return () => source.values;
     }
   }
   throw Exception("Function '$name' not found.");
