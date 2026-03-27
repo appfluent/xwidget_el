@@ -2,7 +2,7 @@
     <img src="https://raw.githubusercontent.com/appfluent/xwidget_el/main/doc/assets/xwidget_el_logo_full.png"
         style="margin-top:16px; margin-bottom: 16px;"
         alt="XWidget EL Logo"
-        height="70"
+        height="80"
     />
 </p>
 
