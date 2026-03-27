@@ -1,11 +1,9 @@
 <p align="center">
-    <img src="https://raw.githubusercontent.com/appfluent/xwidget/main/doc/assets/xwidget_logo_full.png"
-        alt="XWidget Logo"
+    <img src="https://raw.githubusercontent.com/appfluent/xwidget_el/main/doc/assets/xwidget_el_logo_full.png"
+        alt="XWidget EL Logo"
         height="100"
     />
 </p>
-
-# XWidget EL
 
 A powerful expression language for [XWidget](https://pub.dev/packages/xwidget) that enables
 dynamic evaluation of expressions within XML markup. Supports arithmetic, logical, conditional,
