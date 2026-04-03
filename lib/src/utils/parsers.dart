@@ -44,9 +44,12 @@ Color? parseColor(String? value) {
 bool? parseBool(String? value) {
   if (value != null && value.isNotEmpty) {
     switch (value.toLowerCase()) {
-      case "true": return true;
-      case "false": return false;
-      default: throw Exception("Problem parsing bool value: $value");
+      case "true":
+        return true;
+      case "false":
+        return false;
+      default:
+        throw Exception("Problem parsing bool value: $value");
     }
   }
   return null;
@@ -89,17 +92,28 @@ Duration? parseDuration(String? value) {
       final digits = int.parse(match.group(1)!);
       final unit = match.group(2);
       switch (unit) {
-        case "ms": return Duration(milliseconds: digits);
-        case "s": return Duration(seconds: digits);
-        case "m": return Duration(minutes: digits);
-        case "min": return Duration(minutes: digits);
-        case "mins": return Duration(minutes: digits);
-        case "h": return Duration(hours: digits);
-        case "hr": return Duration(hours: digits);
-        case "hrs": return Duration(hours: digits);
-        case "d": return Duration(days: digits);
-        case "day": return Duration(days: digits);
-        case "days": return Duration(days: digits);
+        case "ms":
+          return Duration(milliseconds: digits);
+        case "s":
+          return Duration(seconds: digits);
+        case "m":
+          return Duration(minutes: digits);
+        case "min":
+          return Duration(minutes: digits);
+        case "mins":
+          return Duration(minutes: digits);
+        case "h":
+          return Duration(hours: digits);
+        case "hr":
+          return Duration(hours: digits);
+        case "hrs":
+          return Duration(hours: digits);
+        case "d":
+          return Duration(days: digits);
+        case "day":
+          return Duration(days: digits);
+        case "days":
+          return Duration(days: digits);
       }
     }
     throw Exception("Problem parsing Duration value: $value");
@@ -119,8 +133,10 @@ T? parseEnum<T extends Enum>(List<T> values, String? value) {
       return type;
     }
   }
-  throw Exception("Problem parsing enum '$value'. Valid values are "
-      "${values.asNameMap().keys}");
+  throw Exception(
+    "Problem parsing enum '$value'. Valid values are "
+    "${values.asNameMap().keys}",
+  );
 }
 
 /// Parses a string into an [int].

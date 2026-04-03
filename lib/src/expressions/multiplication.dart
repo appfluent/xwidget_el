@@ -52,9 +52,11 @@ class MultiplicationExpression extends Expression<dynamic> {
 
     try {
       return leftValue * rightValue;
-    } catch(e) {
-      throw Exception("Multiplication is not applicable to types "
-          "'${leftValue.runtimeType}' and '${rightValue.runtimeType}'");
+    } catch (e) {
+      throw Exception(
+        "Multiplication is not applicable to types "
+        "'${leftValue.runtimeType}' and '${rightValue.runtimeType}'",
+      );
     }
   }
 }

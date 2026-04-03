@@ -19,12 +19,14 @@ class TypeConverters {
       } else if (value is T) {
         return value;
       } else {
-        throw Exception("Type converter function not registered for type "
-            "'$key'. You can register a function that converts the value to "
-            "the appropriate type by calling XWidget.registerTypeConverter(). "
-            "Typically, this is done inside main(). Alternatively, you can "
-            "ensure that the data has the appropriate type before attempting "
-            "to import it into your model.");
+        throw Exception(
+          "Type converter function not registered for type "
+          "'$key'. You can register a function that converts the value to "
+          "the appropriate type by calling XWidget.registerTypeConverter(). "
+          "Typically, this is done inside main(). Alternatively, you can "
+          "ensure that the data has the appropriate type before attempting "
+          "to import it into your model.",
+        );
       }
     }
     return null;
@@ -48,7 +50,6 @@ class TypeConverters {
 }
 
 class PropertyTranslation {
-
   // nested model parent
   final String? _destPrefix;
 
@@ -65,18 +66,18 @@ class PropertyTranslation {
   final bool _srcPrefixSet;
 
   const PropertyTranslation._(
-      this._srcToDest,
-      this._destToSrc, [
-      this._destPrefix,
-      this._srcPrefix,
-      this._srcPrefixSet = false
+    this._srcToDest,
+    this._destToSrc, [
+    this._destPrefix,
+    this._srcPrefix,
+    this._srcPrefixSet = false,
   ]);
 
   factory PropertyTranslation(
-      Map<String, String> srcToDest, [
-      String? destPrefix,
-      String? srcPrefix,
-      bool? srcPrefixSet,
+    Map<String, String> srcToDest, [
+    String? destPrefix,
+    String? srcPrefix,
+    bool? srcPrefixSet,
   ]) {
     Map<String, List<String>> destToSrc = {};
     for (final entry in srcToDest.entries) {
@@ -88,11 +89,11 @@ class PropertyTranslation {
       src.add(entry.key);
     }
     return PropertyTranslation._(
-        srcToDest,
-        destToSrc,
-        destPrefix,
-        srcPrefix,
-        srcPrefixSet ?? false,
+      srcToDest,
+      destToSrc,
+      destPrefix,
+      srcPrefix,
+      srcPrefixSet ?? false,
     );
   }
 
@@ -104,9 +105,7 @@ class PropertyTranslation {
 
   PropertyTranslation setParent(String dest) {
     final destPrefix = _addPathPrefix(dest, _destPrefix);
-    final srcPrefix = _srcPrefixSet
-        ? _srcPrefix
-        : _addPathPrefix(dest, _srcPrefix);
+    final srcPrefix = _srcPrefixSet ? _srcPrefix : _addPathPrefix(dest, _srcPrefix);
 
     return PropertyTranslation._(_srcToDest, _destToSrc, destPrefix, srcPrefix);
   }
@@ -131,23 +130,25 @@ class PropertyTranslation {
   /// populating a list from multiple objects not contained in a List,
   /// we need a way to target only the srcPath were currently interested in.
   PropertyTranslation filterSrcDest(String src, String dest) {
-    final srcToDest = Map.fromEntries(_srcToDest.entries.where((e) {
-      return e.key == src || e.value != dest;
-    }));
+    final srcToDest = Map.fromEntries(
+      _srcToDest.entries.where((e) {
+        return e.key == src || e.value != dest;
+      }),
+    );
     return PropertyTranslation(srcToDest, _destPrefix, _srcPrefix);
   }
 
   PropertyTranslation removeSrcPaths(List<String> srcPaths) {
-    final srcToDest = Map.fromEntries(_srcToDest.entries.where((e) {
-      for (final srcPath in srcPaths) {
-        if (e.key == srcPath ||
-            e.key.startsWith("$srcPath.") ||
-            e.key.startsWith("$srcPath[")) {
-          return false;
+    final srcToDest = Map.fromEntries(
+      _srcToDest.entries.where((e) {
+        for (final srcPath in srcPaths) {
+          if (e.key == srcPath || e.key.startsWith("$srcPath.") || e.key.startsWith("$srcPath[")) {
+            return false;
+          }
         }
-      }
-      return true;
-    }));
+        return true;
+      }),
+    );
     return PropertyTranslation(srcToDest, _destPrefix, _srcPrefix);
   }
 
@@ -192,18 +193,14 @@ class PropertyTransformer<T> {
   final T? defaultValue;
   final TypeConverter<T>? converter;
 
-  const PropertyTransformer(
-    this.property, {
-    this.isKey = false,
-    this.defaultValue,
-    this.converter,
-  }): type = T;
+  const PropertyTransformer(this.property, {this.isKey = false, this.defaultValue, this.converter})
+    : type = T;
 
   T? transform({
     required Map<String, dynamic> data,
     PropertyTranslation? translation,
     Map<String, TypeConverter>? functions,
-    bool? immutable
+    bool? immutable,
   }) {
     // set default values, if null
     translation ??= const PropertyTranslation._({}, {});
@@ -216,7 +213,7 @@ class PropertyTransformer<T> {
 
     final value = _transform.callWith(
       typeArguments: [T],
-      parameters: [property, data, translation, immutable, T]
+      parameters: [property, data, translation, immutable, T],
     );
     return (converter != null ? converter!(value) : value) ?? defaultValue;
   }
@@ -224,7 +221,7 @@ class PropertyTransformer<T> {
   @override
   toString() {
     return "PropertyTransformer<$T>: property=$property, "
-       "transformFunction=$converter, defaultValue=$defaultValue";
+        "transformFunction=$converter, defaultValue=$defaultValue";
   }
 
   //===================================
@@ -241,40 +238,34 @@ class PropertyTransformer<T> {
     final type = <V>[];
     if (type is List<Model?>) {
       // V is a Model
-      return _toModel.callWith(
-          typeArguments: [V],
-          parameters: [data, translation, immutable]
-      );
+      return _toModel.callWith(typeArguments: [V], parameters: [data, translation, immutable]);
     } else if (type is List<List?>) {
       // V is a List
       return _toList.callWith(
-          typeArguments: V.args,
-          parameters: [property, data, translation, immutable]
+        typeArguments: V.args,
+        parameters: [property, data, translation, immutable],
       );
     } else if (type is List<Set?>) {
       // V is a Set
       return _toSet.callWith(
-          typeArguments: V.args,
-          parameters: [property, data, translation, immutable]
+        typeArguments: V.args,
+        parameters: [property, data, translation, immutable],
       );
     } else if (type is List<Map?>) {
       // V is a Map
       return _toMap.callWith(
-          typeArguments: V.args,
-          parameters: [property, data, translation, immutable]
+        typeArguments: V.args,
+        parameters: [property, data, translation, immutable],
       );
     } else {
-      return _toObject.callWith(
-          typeArguments: [V],
-          parameters: [property, data, translation]
-      );
+      return _toObject.callWith(typeArguments: [V], parameters: [property, data, translation]);
     }
   }
 
   Model? _toModel<V extends Model?>(
     Map<String, dynamic> data,
     PropertyTranslation translation,
-    bool immutable
+    bool immutable,
   ) {
     final factory = Models.factoryOf.callWith(typeArguments: [V.nonNull]);
     final nested = translation.setParent(property);
@@ -286,11 +277,13 @@ class PropertyTransformer<T> {
     String property,
     Map<String, dynamic> data,
     PropertyTranslation translation,
-    bool immutable
+    bool immutable,
   ) {
     final list = <V>[];
     final translated = translation.translate(property);
-    addItem(item) { if (item != null) list.add(item); }
+    addItem(item) {
+      if (item != null) list.add(item);
+    }
 
     for (final srcPath in translated.srcPaths) {
       final resolution = PathResolution(srcPath, false, data);
@@ -321,11 +314,13 @@ class PropertyTransformer<T> {
     String property,
     Map<String, dynamic> data,
     PropertyTranslation translation,
-    bool immutable
+    bool immutable,
   ) {
     final set = <V>{};
     final translated = translation.translate(property);
-    addItem(item) { if (item != null) set.add(item); }
+    addItem(item) {
+      if (item != null) set.add(item);
+    }
 
     for (final srcPath in translated.srcPaths) {
       final resolution = PathResolution(srcPath, false, data);
@@ -352,13 +347,13 @@ class PropertyTransformer<T> {
     return immutable ? Set.unmodifiable(set) : set;
   }
 
-  Map<K,V> _toMap<K,V>(
+  Map<K, V> _toMap<K, V>(
     String property,
     Map<String, dynamic> data,
     PropertyTranslation translation,
     bool immutable,
   ) {
-    final map = <K,V>{};
+    final map = <K, V>{};
     final translated = translation.translate(property);
     for (final srcPath in translated.srcPaths) {
       final resolution = PathResolution(srcPath, false, data);
@@ -389,11 +384,7 @@ class PropertyTransformer<T> {
     return immutable ? Map.unmodifiable(map) : map;
   }
 
-  V? _toObject<V>(
-    String property,
-    Map<String, dynamic> data,
-    PropertyTranslation translation,
-  ) {
+  V? _toObject<V>(String property, Map<String, dynamic> data, PropertyTranslation translation) {
     V? object;
     final translated = translation.translate(property);
     for (final srcPath in translated.srcPaths) {
@@ -410,7 +401,7 @@ class PropertyTransformer<T> {
     Map<String, dynamic> data,
     PropertyTranslation translation,
     bool immutable,
-    Function(V?) callback
+    Function(V?) callback,
   ) {
     Map<String, String>? currDests;
     final otherDests = <String, String>{};
@@ -432,9 +423,10 @@ class PropertyTransformer<T> {
     }
 
     for (final destGroup in destGroups) {
-      final merged = PropertyTranslation({}
-        ..addAll(otherDests)
-        ..addAll(destGroup)
+      final merged = PropertyTranslation(
+        {}
+          ..addAll(otherDests)
+          ..addAll(destGroup),
       );
       callback(_transform<V>(property, data, merged, immutable));
     }

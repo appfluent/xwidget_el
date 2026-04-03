@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:xwidget_el/xwidget_el.dart';
 
-
 void main() {
   test('Assert can get nested data', () {
     final account = Account({"number": "001", "amount": 99999999999999});

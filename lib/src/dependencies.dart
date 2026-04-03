@@ -56,9 +56,7 @@ class Dependencies {
   /// For example, `dependencies.getValue('user.email[0]');`
   dynamic getValue(String path) {
     final resolved = _getDataStore(path);
-    return resolved.key.isNotEmpty
-        ? resolved.value.getValue(resolved.key)
-        : resolved.value;
+    return resolved.key.isNotEmpty ? resolved.value.getValue(resolved.key) : resolved.value;
   }
 
   /// Removes the dependency referenced by [key].
@@ -113,10 +111,10 @@ class Dependencies {
   /// Returns a formatted JSON string representation of this instance.
   @override
   String toString() {
-    return JsonEncoder.withIndent('  ', (value) => value?.toString()).convert({
-      "data": _data,
-      "global": _globalData
-    });
+    return JsonEncoder.withIndent(
+      '  ',
+      (value) => value?.toString(),
+    ).convert({"data": _data, "global": _globalData});
   }
 
   /// Gets local or global data depending on the key's prefix

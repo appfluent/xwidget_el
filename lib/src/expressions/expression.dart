@@ -25,7 +25,6 @@ import '../dependencies.dart';
 /// print(expr.evaluate(dependencies)); // -> 42
 /// ```
 abstract class Expression<T> {
-
   /// Evaluates this expression using the provided [dependencies].
   ///
   /// Subclasses must implement this method to define how the expression
@@ -51,7 +50,9 @@ abstract class Expression<T> {
     } else if (value is V) {
       return value;
     }
-    throw Exception("Unexpected type for $value. Was expecting a subclass"
-        " of 'Expression<$V>' or '$V'");
+    throw Exception(
+      "Unexpected type for $value. Was expecting a subclass"
+      " of 'Expression<$V>' or '$V'",
+    );
   }
 }

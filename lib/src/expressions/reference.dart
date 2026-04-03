@@ -60,9 +60,7 @@ class ReferenceExpression extends Expression<dynamic> {
 
   @override
   dynamic evaluate(Dependencies dependencies) {
-    dynamic value = data == null
-      ? dependencies.getValue(path)
-      : evaluateValue(data, dependencies);
+    dynamic value = data == null ? dependencies.getValue(path) : evaluateValue(data, dependencies);
 
     for (int i = 0; i < subPaths.length && value != null; i++) {
       final next = subPaths[i];

@@ -4,19 +4,15 @@ import 'package:xwidget_el/src/model/brackets.dart';
 import 'package:xwidget_el/src/model/model.dart';
 import 'package:xwidget_el/src/parser.dart';
 
-
 void main() {
   final parser = ELParser();
   final dependencies = Dependencies({
     "person": Person("Mike", "Jones"),
-    "size" : {
-      "width": 300.0,
-      "height": 200
-    },
+    "size": {"width": 300.0, "height": 200},
     "indexes": [1, 0, 2],
     "providers": [
-      { "title": "Title #1" },
-      { "title": "Title #2" }
+      {"title": "Title #1"},
+      {"title": "Title #2"},
     ],
     "functionRefs": {
       "func1param": (a) => a,
@@ -27,9 +23,15 @@ void main() {
   });
 
   dependencies.setValue("global.users", [
-    { "abc": { "name": "Joe"   } },
-    { "xyz": { "name": "Mike"  } },
-    { "123": { "name": "Sally" } }
+    {
+      "abc": {"name": "Joe"},
+    },
+    {
+      "xyz": {"name": "Mike"},
+    },
+    {
+      "123": {"name": "Sally"},
+    },
   ]);
 
   test('Assert global reference parsing', () {
@@ -104,46 +106,34 @@ void main() {
   });
 
   test('Assert int division by 0 exception', () {
-    expect(
-      () => parser.parse('3 / 0').value.evaluate(dependencies),
-      throwsException
-    );
+    expect(() => parser.parse('3 / 0').value.evaluate(dependencies), throwsException);
   });
 
   test('Assert List item reference throws Exception when index is not an integer', () {
     final deps = Dependencies({
-      "items" : [
-        { "id": 23 }
+      "items": [
+        {"id": 23},
       ],
     });
-    expect(
-      () => parser.parse("items['a'].id").value.evaluate(deps),
-      throwsException
-    );
+    expect(() => parser.parse("items['a'].id").value.evaluate(deps), throwsException);
   });
 
   test('Assert List item reference throws Exception when index is null', () {
     final deps = Dependencies({
-      "items" : [
-        { "id": 23 }
+      "items": [
+        {"id": 23},
       ],
     });
-    expect(
-      () => parser.parse("items[a].id").value.evaluate(deps),
-      throwsException
-    );
+    expect(() => parser.parse("items[a].id").value.evaluate(deps), throwsException);
   });
 
   test('Assert reference throws Exception when List item is references like a property', () {
     final deps = Dependencies({
-      "items" : [
-        { "id": 23 }
+      "items": [
+        {"id": 23},
       ],
     });
-    expect(
-      () => parser.parse('items.ll.id').value.evaluate(deps),
-      throwsException
-    );
+    expect(() => parser.parse('items.ll.id').value.evaluate(deps), throwsException);
   });
 
   // ==================================
@@ -151,10 +141,7 @@ void main() {
   // ==================================
 
   test('Assert precedence && before ||', () {
-    final deps = Dependencies({
-      "isTrue" : true,
-      "isFalse": false,
-    });
+    final deps = Dependencies({"isTrue": true, "isFalse": false});
     final result = parser.parse('isTrue || isFalse && isFalse');
     expect(result.value.evaluate(deps), true);
   });
@@ -164,29 +151,19 @@ void main() {
   // ==================================
 
   test('Assert if-null returns 1st value', () {
-    final deps = Dependencies({
-      "item1": "String1",
-      "item2": "String2",
-    });
+    final deps = Dependencies({"item1": "String1", "item2": "String2"});
     final result = parser.parse('item1 ?? item2');
     expect(result.value.evaluate(deps), "String1");
   });
 
   test('Assert if-null return 2nd value', () {
-    final deps = Dependencies({
-      "item1": null,
-      "item2": "String2",
-    });
+    final deps = Dependencies({"item1": null, "item2": "String2"});
     final result = parser.parse('item1 ?? item2');
     expect(result.value.evaluate(deps), "String2");
   });
 
   test('Assert if-null return 3rd value', () {
-    final deps = Dependencies({
-      "item1": null,
-      "item2": null,
-      "item3": "String3"
-    });
+    final deps = Dependencies({"item1": null, "item2": null, "item3": "String3"});
     final result = parser.parse('item1 ?? item2 ?? item3');
     expect(result.value.evaluate(deps), "String3");
   });
@@ -210,9 +187,8 @@ void main() {
     int addNumbers(int n1, [int n2 = 0, int n3 = 0, int n4 = 0, int n5 = 0]) {
       return n1 + n2 + n3 + n4 + n5;
     }
-    final deps = Dependencies({
-      "addNumbers": addNumbers,
-    });
+
+    final deps = Dependencies({"addNumbers": addNumbers});
     final result = parser.parse("addNumbers(3,10,4)");
     expect(result.value.evaluate(deps), 17);
   });
@@ -242,10 +218,10 @@ void main() {
               Person("Sam", "Wilson"),
               Person("April", "Johnson"),
               Person("Mike", "Miller"),
-            ]
-          }
-        }
-      }
+            ],
+          },
+        },
+      },
     });
     final result = parser.parse("functions.misc.test(5).list[4].toString().substring(0,19)");
     expect(result.value.evaluate(deps), "Person{first: Mike,");
@@ -261,10 +237,7 @@ class Person extends Model {
   String get first => getValue("first");
   String get last => getValue("last");
 
-  Person(String first, String last): super({
-    "first": first,
-    "last": last,
-  });
+  Person(String first, String last) : super({"first": first, "last": last});
 
   String fullName() => "$first $last";
 

@@ -63,7 +63,9 @@ class LessThanExpression extends Expression<bool> {
 
     final leftType = leftValue.runtimeType;
     final rightType = rightValue.runtimeType;
-    throw Exception("Less-Than comparison not applicable to types "
-        "'$leftType' and '$rightType'");
+    throw Exception(
+      "Less-Than comparison not applicable to types "
+      "'$leftType' and '$rightType'",
+    );
   }
 }

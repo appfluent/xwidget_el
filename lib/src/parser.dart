@@ -70,8 +70,10 @@ class ELParser {
     if (expression.isEmpty) return expression;
     final result = _parser.parse(expression);
     if (result is Success) return result.value.evaluate(dependencies);
-    throw Exception("Failed to parse EL expression "
-        "'$expression'. ${result.message}");
+    throw Exception(
+      "Failed to parse EL expression "
+      "'$expression'. ${result.message}",
+    );
   }
 }
 
@@ -137,8 +139,10 @@ class ELParserDefinition extends ELGrammarDefinition {
       } else if (item[0].value == '%') {
         left = ModuloExpression(left, right);
       } else {
-        throw Exception("Unknown multiplicative expression type "
-            "'${item[0].value}'");
+        throw Exception(
+          "Unknown multiplicative expression type "
+          "'${item[0].value}'",
+        );
       }
     }
     return left;
@@ -267,20 +271,18 @@ class ELParserDefinition extends ELGrammarDefinition {
 
   /// Parses integer literals and maps them to [ConstantExpression<int>].
   @override
-  Parser integerNumber() => super.integerNumber().flatten().map((c) =>
-      ConstantExpression<int>(int.parse(c))
-  );
+  Parser integerNumber() =>
+      super.integerNumber().flatten().map((c) => ConstantExpression<int>(int.parse(c)));
 
   /// Parses double literals and maps them to [ConstantExpression<double>].
   @override
-  Parser doubleNumber() => super.doubleNumber().flatten().map((c) =>
-      ConstantExpression<double>(double.parse(c))
-  );
+  Parser doubleNumber() =>
+      super.doubleNumber().flatten().map((c) => ConstantExpression<double>(double.parse(c)));
 
   /// Parses single-line string literals and maps them to [ConstantExpression<String>].
   @override
-  Parser singleLineString() => super.singleLineString().flatten().map((c) =>
-      ConstantExpression<String>(c.substring(1, c.length - 1))
+  Parser singleLineString() => super.singleLineString().flatten().map(
+    (c) => ConstantExpression<String>(c.substring(1, c.length - 1)),
   );
 
   // Parses function parameters and returns them as a list of [Expression]s.
@@ -304,9 +306,7 @@ class ELParserDefinition extends ELGrammarDefinition {
   /// - Otherwise, returns a [DynamicFunction].
   @override
   Parser function() => super.function().map((c) {
-    return c[0] == "eval"
-      ? EvalFunction(c[2][0], _parser)
-      : DynamicFunction(c[0], null, c[2]);
+    return c[0] == "eval" ? EvalFunction(c[2][0], _parser) : DynamicFunction(c[0], null, c[2]);
   });
 
   /// Parses the boolean literal `true` and maps it to [ConstantExpression<bool>]

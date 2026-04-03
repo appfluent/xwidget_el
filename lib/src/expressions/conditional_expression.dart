@@ -17,7 +17,7 @@ import 'expression.dart';
 /// - If [condition] evaluates to `false`, the [falseValue] expression is evaluated and returned.
 /// - Throws an [Exception] if [condition] does not evaluate to a boolean.
 class ConditionalExpression<T> extends Expression<T> {
-  Expression<bool> condition;
+  Expression condition;
   Expression<T> trueValue;
   Expression<T> falseValue;
 
@@ -25,8 +25,10 @@ class ConditionalExpression<T> extends Expression<T> {
 
   @override
   T evaluate(Dependencies dependencies) {
-    return condition.evaluate(dependencies)
-        ? trueValue.evaluate(dependencies)
-        : falseValue.evaluate(dependencies);
+    final result = condition.evaluate(dependencies);
+    if (result is bool) {
+      return result ? trueValue.evaluate(dependencies) : falseValue.evaluate(dependencies);
+    }
+    throw Exception("Conditional expression expected bool, got '${result.runtimeType}'");
   }
 }

@@ -5,7 +5,6 @@ import 'package:petitparser/petitparser.dart';
 /// Defines the lexical and syntactic rules used to parse EL expressions.
 /// Built on top of [petitparser]'s [GrammarDefinition].
 class ELGrammarDefinition extends GrammarDefinition {
-
   /// Entry point of the grammar.
   ///
   /// Parses a full [expression] followed by end‑of‑input, or falls back
@@ -14,65 +13,52 @@ class ELGrammarDefinition extends GrammarDefinition {
   Parser start() => (ref0(expression).end()).or(ref0(failureState));
 
   /// Matches the boolean literal `false`.
-  Parser boolFalse() =>
-      ref1(token, 'false');
+  Parser boolFalse() => ref1(token, 'false');
 
   /// Matches the boolean literal `true`.
-  Parser boolTrue() =>
-      ref1(token, 'true');
+  Parser boolTrue() => ref1(token, 'true');
 
   /// Defines the failure state of the grammar.
   ///
   /// Used to capture invalid syntax by attempting to parse an [expression]
   /// followed by [fail], or just [fail].
-  Parser failureState() =>
-      (ref0(expression).trim() & ref0(fail).trim()) | ref0(fail).trim();
+  Parser failureState() => (ref0(expression).trim() & ref0(fail).trim()) | ref0(fail).trim();
 
   /// Matches any single character (used for failure recovery).
   Parser fail() => any();
 
   /// Matches a letter or underscore.
-  Parser letterOrUnderscore() =>
-      ref0(letter) | ref1(token, '_');
+  Parser letterOrUnderscore() => ref0(letter) | ref1(token, '_');
 
   /// Matches a floating‑point number (digits before and after a decimal point).
   Parser doubleNumber() =>
-      ref0(digit) &
-      ref0(digit).star() &
-      char('.') &
-      ref0(digit) &
-      ref0(digit).star();
+      ref0(digit) & ref0(digit).star() & char('.') & ref0(digit) & ref0(digit).star();
 
   /// Matches an integer number (sequence of digits).
-  Parser integerNumber() =>
-      ref0(digit).plus().flatten();
+  Parser integerNumber() => ref0(digit).plus().flatten();
 
   /// Matches a single‑quoted string literal.
-  Parser singleLineString() =>
-      char("'") & ref0(stringContent).star() & char("'");
+  Parser singleLineString() => char("'") & ref0(stringContent).star() & char("'");
 
   /// Matches the content inside a single‑quoted string.
-  Parser stringContent() =>
-      pattern("^'");
+  Parser stringContent() => pattern("^'");
 
   /// Matches a literal value (number, boolean, or string).
   Parser literal() => ref1(
-      token,
-      ref0(doubleNumber) |
-      ref0(integerNumber) |
-      ref0(boolTrue) |
-      ref0(boolFalse) |
-      ref0(singleLineString)
+    token,
+    ref0(doubleNumber) |
+        ref0(integerNumber) |
+        ref0(boolTrue) |
+        ref0(boolFalse) |
+        ref0(singleLineString),
   );
 
   /// Matches an identifier (letters, underscores, digits).
   Parser identifier() =>
-      (ref0(letterOrUnderscore) &
-      (ref0(letterOrUnderscore) | ref0(digit)).star()).flatten();
+      (ref0(letterOrUnderscore) & (ref0(letterOrUnderscore) | ref0(digit)).star()).flatten();
 
   /// Matches a reference (identifier plus optional subpath).
-  Parser reference() =>
-      ref0(identifier) & ref0(referenceSubPath);
+  Parser reference() => ref0(identifier) & ref0(referenceSubPath);
 
   /// Matches reference subpaths (array or property access).
   Parser referenceSubPath() =>
@@ -80,16 +66,10 @@ class ELGrammarDefinition extends GrammarDefinition {
 
   /// Matches a function reference (identifier followed by parentheses).
   Parser functionReference() =>
-      ref0(identifier) &
-      ref1(token, '(') &
-      ref0(functionParameters).optional() &
-      ref1(token, ')');
+      ref0(identifier) & ref1(token, '(') & ref0(functionParameters).optional() & ref1(token, ')');
 
   /// Matches an array reference (indexing with square brackets).
-  Parser arrayReference() =>
-      char('[') &
-      (ref0(expression) | ref0(reference)) &
-      char(']');
+  Parser arrayReference() => char('[') & (ref0(expression) | ref0(reference)) & char(']');
 
   /// Matches a function call (identifier plus parameters).
   Parser function() =>
@@ -99,8 +79,7 @@ class ELGrammarDefinition extends GrammarDefinition {
       ref1(token, ')');
 
   /// Matches function parameters (comma‑separated expressions).
-  Parser functionParameters() =>
-      (ref0(expression) & ref1(token, ',')).star() & ref0(expression);
+  Parser functionParameters() => (ref0(expression) & ref1(token, ',')).star() & ref0(expression);
 
   /// Matches additive operators (`+` or `-`).
   Parser additiveOperator() => ref1(token, '+') | ref1(token, '-');
@@ -114,20 +93,14 @@ class ELGrammarDefinition extends GrammarDefinition {
 
   /// Matches multiplicative operators (`*`, `/`, `~/`, `%`).
   Parser multiplicativeOperator() =>
-      ref1(token, '*') |
-      ref1(token, '/') |
-      ref1(token, '~') & ref1(token, '/') |
-      ref1(token, '%');
+      ref1(token, '*') | ref1(token, '/') | ref1(token, '~') & ref1(token, '/') | ref1(token, '%');
 
   /// Matches unary negate operators (`-`, `!`).
   Parser unaryNegateOperator() => ref1(token, '-') | ref1(token, '!');
 
   /// Matches expressions wrapped in parentheses, with optional subpath.
   Parser expressionInParentheses() =>
-      ref1(token, '(') &
-      ref0(expression) &
-      ref1(token, ')') &
-      ref0(referenceSubPath);
+      ref1(token, '(') & ref0(expression) & ref1(token, ')') & ref0(referenceSubPath);
 
   /// Top‑level expression rule.
   Parser expression() => ref0(conditionalExpression);
@@ -139,28 +112,23 @@ class ELGrammarDefinition extends GrammarDefinition {
 
   /// Matches null‑coalescing expressions (`??`).
   Parser ifNullExpression() =>
-      ref0(logicalOrExpression) &
-      (ref1(token, '??') & ref0(logicalOrExpression)).star();
+      ref0(logicalOrExpression) & (ref1(token, '??') & ref0(logicalOrExpression)).star();
 
   /// Matches logical OR expressions (`||`).
   Parser logicalOrExpression() =>
-      ref0(logicalAndExpression) &
-      (ref1(token, '||') & ref0(logicalAndExpression)).star();
+      ref0(logicalAndExpression) & (ref1(token, '||') & ref0(logicalAndExpression)).star();
 
   /// Matches logical AND expressions (`&&`).
   Parser logicalAndExpression() =>
-      ref0(equalityExpression) &
-      (ref1(token, '&&') & ref0(equalityExpression)).star();
+      ref0(equalityExpression) & (ref1(token, '&&') & ref0(equalityExpression)).star();
 
   /// Matches equality expressions (`==`, `!=`).
   Parser equalityExpression() =>
-      ref0(relationalExpression) &
-      (ref0(equalityOperator) & ref0(relationalExpression)).optional();
+      ref0(relationalExpression) & (ref0(equalityOperator) & ref0(relationalExpression)).optional();
 
   /// Matches relational expressions (`<`, `<=`, `>`, `>=`).
   Parser relationalExpression() =>
-      ref0(additiveExpression) &
-      (ref0(relationalOperator) & ref0(additiveExpression)).optional();
+      ref0(additiveExpression) & (ref0(relationalOperator) & ref0(additiveExpression)).optional();
 
   /// Matches additive expressions (`+`, `-`).
   Parser additiveExpression() =>

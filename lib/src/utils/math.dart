@@ -48,6 +48,29 @@ int? ceil(dynamic value) {
   throw Exception("Invalid value '$value' for 'ceil' function.");
 }
 
+/// Clamps a value to the range [lower]..[upper].
+///
+/// Returns [lower] if [value] < [lower], [upper] if [value] > [upper],
+/// otherwise returns [value].
+///
+/// Examples:
+/// ```dart
+/// clamp(150, 0, 100);   // -> 100
+/// clamp(-5, 0, 100);    // -> 0
+/// clamp(50, 0, 100);    // -> 50
+/// ```
+///
+/// ```xml
+/// <Container width="${clamp(barWidth, 20, 300)}"/>
+/// <Opacity opacity="${clamp(progress, 0.0, 1.0)}"/>
+/// ```
+dynamic clamp(dynamic value, dynamic lower, dynamic upper) {
+  if (value == null) return lower;
+  if (Comparable.compare(value as Comparable, lower as Comparable) < 0) return lower;
+  if (Comparable.compare(value, upper as Comparable) > 0) return upper;
+  return value;
+}
+
 /// Returns the largest integer less than or equal to [value].
 ///
 /// - Accepts `int`, `double`, or `String`.
@@ -66,6 +89,48 @@ int? floor(dynamic value) {
   if (value is double) return value.floor();
   if (value is String) return parseDouble(value)?.floor();
   throw Exception("Invalid value '$value' for 'floor' function.");
+}
+
+/// Returns the larger of two values.
+///
+/// Both values must be [Comparable]. If either is null, the non-null
+/// value is returned. If both are null, returns null.
+///
+/// Examples:
+/// ```dart
+/// max(3, 7);       // -> 7
+/// max(10.5, 2.3);  // -> 10.5
+/// max(-1, -5);     // -> -1
+/// ```
+///
+/// ```xml
+/// <Container height="${max(barHeight, 4)}"/>
+/// ```
+dynamic max(dynamic a, dynamic b) {
+  if (a == null) return b;
+  if (b == null) return a;
+  return Comparable.compare(a as Comparable, b as Comparable) >= 0 ? a : b;
+}
+
+/// Returns the smaller of two values.
+///
+/// Both values must be [Comparable]. If either is null, the non-null
+/// value is returned. If both are null, returns null.
+///
+/// Examples:
+/// ```dart
+/// min(3, 7);       // -> 3
+/// min(10.5, 2.3);  // -> 2.3
+/// min(-1, -5);     // -> -5
+/// ```
+///
+/// ```xml
+/// <Container width="${min(contentWidth, 400)}"/>
+/// ```
+dynamic min(dynamic a, dynamic b) {
+  if (a == null) return b;
+  if (b == null) return a;
+  return Comparable.compare(a as Comparable, b as Comparable) <= 0 ? a : b;
 }
 
 /// Generates a non-negative random integer uniformly distributed in the range

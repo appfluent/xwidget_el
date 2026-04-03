@@ -32,11 +32,7 @@ extension MapBrackets on Map<String, dynamic> {
     return PathResolution(path, false, this).removeValue();
   }
 
-  ValueNotifier listenForChanges(
-      String path,
-      dynamic initialValue,
-      dynamic defaultValue
-  ) {
+  ValueNotifier listenForChanges(String path, dynamic initialValue, dynamic defaultValue) {
     final resolved = PathResolution(path, true, this);
     return resolved.listenForChanges(initialValue, defaultValue);
   }
@@ -51,13 +47,8 @@ extension ListBrackets on List<dynamic> {
     PathResolution(path, true, this).setValue(value, true);
   }
 
-  ValueNotifier listenForChanges(
-      String path,
-      dynamic initialValue,
-      dynamic defaultValue
-  ) {
-    return PathResolution(path, true, this)
-        .listenForChanges(initialValue, defaultValue);
+  ValueNotifier listenForChanges(String path, dynamic initialValue, dynamic defaultValue) {
+    return PathResolution(path, true, this).listenForChanges(initialValue, defaultValue);
   }
 
   void setValueAt(int index, dynamic value, [dynamic fill]) {
@@ -71,8 +62,10 @@ extension ListBrackets on List<dynamic> {
           add(i == index ? value : fill);
         }
       } catch (e) {
-        throw Exception("Problem setting item value at index $index. "
-            "Unable to add filler value '$fill' to $runtimeType,");
+        throw Exception(
+          "Problem setting item value at index $index. "
+          "Unable to add filler value '$fill' to $runtimeType,",
+        );
       }
     }
   }
@@ -87,11 +80,7 @@ class PathResolution {
 
   PathResolution._(this.path, this.data, this.parent);
 
-  factory PathResolution(
-      String? path,
-      bool createPath,
-      dynamic data
-  ) {
+  factory PathResolution(String? path, bool createPath, dynamic data) {
     return _resolve(path, createPath, data, null);
   }
 
@@ -107,20 +96,17 @@ class PathResolution {
 
   dynamic getValue(bool readValueNotifier) {
     dynamic value = _readValue(path, _dataValue);
-    return value is ModelValueNotifier && readValueNotifier
-        ? value.value : value;
+    return value is ModelValueNotifier && readValueNotifier ? value.value : value;
   }
 
   void setValue(dynamic newValue, bool writeToValueNotifier) {
     bool written = false;
     final oldValue = getValue(false);
     final changed =
-      (oldValue is ModelValueNotifier ? oldValue.value : oldValue) !=
-      (newValue is ModelValueNotifier ? newValue.value : newValue);
+        (oldValue is ModelValueNotifier ? oldValue.value : oldValue) !=
+        (newValue is ModelValueNotifier ? newValue.value : newValue);
 
-    if (oldValue is ModelValueNotifier &&
-        newValue is! ModelValueNotifier &&
-        writeToValueNotifier) {
+    if (oldValue is ModelValueNotifier && newValue is! ModelValueNotifier && writeToValueNotifier) {
       oldValue.value = newValue;
       written = true;
     } else {
@@ -168,10 +154,10 @@ class PathResolution {
   //===================================
 
   static PathResolution _resolve(
-      String? path,
-      bool createPath,
-      dynamic data,
-      PathResolution? parent
+    String? path,
+    bool createPath,
+    dynamic data,
+    PathResolution? parent,
   ) {
     if (path != null && path.isNotEmpty && data != null) {
       final pathInfo = PathInfo.parsePath(path);
@@ -186,8 +172,7 @@ class PathResolution {
         data.resumeNotifications();
       }
 
-      dynamic currPath = pathInfo.isIndex
-          ? int.parse(pathInfo.currPath) : pathInfo.currPath;
+      dynamic currPath = pathInfo.isIndex ? int.parse(pathInfo.currPath) : pathInfo.currPath;
       dynamic value = _readValue(currPath, collection);
 
       if (value == null) {
@@ -198,22 +183,26 @@ class PathResolution {
             if (collection is List) {
               collection.insertFill(currPath, value, null);
             } else {
-                throw Exception("Cannot use index reference "
-                    "[${pathInfo.currPath}] to set a value on a non-list "
-                    "collection.");
+              throw Exception(
+                "Cannot use index reference "
+                "[${pathInfo.currPath}] to set a value on a non-list "
+                "collection.",
+              );
             }
           } else {
             collection[currPath] = value;
           }
         } else if (!pathInfo.isNullable) {
-          throw Exception("Value at path '$path' is null. Use the '?' "
-              "null-safety operator to access '${pathInfo.currPath}'");
+          throw Exception(
+            "Value at path '$path' is null. Use the '?' "
+            "null-safety operator to access '${pathInfo.currPath}'",
+          );
         }
       }
       final resolution = PathResolution._(currPath, data, parent);
       return pathInfo.nextPath.isNotEmpty
-        ? _resolve(pathInfo.nextPath, createPath, value, resolution)
-        : resolution;
+          ? _resolve(pathInfo.nextPath, createPath, value, resolution)
+          : resolution;
     }
     return PathResolution._(path, null, null);
   }
@@ -255,13 +244,17 @@ class PathResolution {
     } else if (collection is Map) {
       return collection[currPath];
     } else if (collection is Iterable) {
-      throw Exception("Unable to read value at index '$currPath' from "
-          "Iterable collection of type '${collection.runtimeType}'. The "
-          "index provided is not an int. Check your property paths.");
+      throw Exception(
+        "Unable to read value at index '$currPath' from "
+        "Iterable collection of type '${collection.runtimeType}'. The "
+        "index provided is not an int. Check your property paths.",
+      );
     }
-    throw Exception("Path '$currPath' references an unsupported collection of "
+    throw Exception(
+      "Path '$currPath' references an unsupported collection of "
       "type '${collection.runtimeType}'. Supported collections are List, Set, "
-      "and Map.");
+      "and Map.",
+    );
   }
 }
 
@@ -273,13 +266,7 @@ class PathInfo {
   final bool isList;
   final bool isIndex;
 
-  PathInfo(
-      this.currPath,
-      this.nextPath,
-      this.isNullable,
-      this.isList,
-      this.isIndex
-  );
+  PathInfo(this.currPath, this.nextPath, this.isNullable, this.isList, this.isIndex);
 
   factory PathInfo.parsePath(String path) {
     String currPath = "";

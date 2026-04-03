@@ -60,8 +60,7 @@ class LessThanOrEqualToExpression extends Expression<bool> {
       return leftValue <= rightValue;
     }
     if (leftValue is DateTime && rightValue is DateTime) {
-      return leftValue.isBefore(rightValue) ||
-             leftValue.isAtSameMomentAs(rightValue);
+      return leftValue.isBefore(rightValue) || leftValue.isAtSameMomentAs(rightValue);
     }
     if (leftValue is String && rightValue is String) {
       return leftValue.compareTo(rightValue) <= 0;
@@ -69,7 +68,9 @@ class LessThanOrEqualToExpression extends Expression<bool> {
 
     final leftType = leftValue.runtimeType;
     final rightType = rightValue.runtimeType;
-    throw Exception("Less-Than-Or-Equal-To comparison not applicable to "
-        "types '$leftType' and '$rightType'");
+    throw Exception(
+      "Less-Than-Or-Equal-To comparison not applicable to "
+      "types '$leftType' and '$rightType'",
+    );
   }
 }

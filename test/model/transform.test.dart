@@ -3,9 +3,7 @@ import 'package:xwidget_el/xwidget_el.dart';
 
 import '../testing_utils.dart';
 
-
 void main() {
-
   setUpAll(() {
     Models.register<Profile>(Profile.import, const [
       PropertyTransformer<String>("username"),
@@ -28,19 +26,9 @@ void main() {
   });
 
   test('Assert import without translation', () {
-    final person = Person({
-      "first": "Mike",
-      "last": "Jones",
-      "employee": "true",
-      "age": "25"
-    });
+    final person = Person({"first": "Mike", "last": "Jones", "employee": "true", "age": "25"});
 
-    expect(person, {
-      "first": "Mike",
-      "last": "Jones",
-      "employee": true,
-      "age": 25
-    });
+    expect(person, {"first": "Mike", "last": "Jones", "employee": true, "age": 25});
   });
 
   test('Assert import ignores undefined properties', () {
@@ -49,35 +37,21 @@ void main() {
       "last": "Jones",
       "employee": "true",
       "age": "25",
-      "ssn": "123-45-6789"
+      "ssn": "123-45-6789",
     });
 
-    expect(person, {
-      "first": "Mike",
-      "last": "Jones",
-      "employee": true,
-      "age": 25
-    });
+    expect(person, {"first": "Mike", "last": "Jones", "employee": true, "age": 25});
   });
 
   test('Assert import translation', () {
     final person = Person({
-        "firstName": "Mike",
-        "lastName": "Jones",
-        "employee": "true",
-        "age": "25"
-      }, translation: PropertyTranslation({
-        "firstName": "first",
-        "lastName": "last"
-      })
-    );
+      "firstName": "Mike",
+      "lastName": "Jones",
+      "employee": "true",
+      "age": "25",
+    }, translation: PropertyTranslation({"firstName": "first", "lastName": "last"}));
 
-    expect(person, {
-      "first": "Mike",
-      "last": "Jones",
-      "employee": true,
-      "age": 25
-    });
+    expect(person, {"first": "Mike", "last": "Jones", "employee": true, "age": 25});
   });
 
   test('Assert that nested models are imported', () {
@@ -87,21 +61,20 @@ void main() {
       PropertyTransformer<Image>("image"),
     ]);
 
-    final content = TestModel({
+    final content = TestModel(
+      {
         "title": "Hello World",
         "summary": "Basic App",
         "imageUrl": "https://www.example.com/image.jpg",
         "imageCaption": "Sunset",
-      }, translation: PropertyTranslation({
-        "imageUrl": "image.url",
-        "imageCaption": "image.caption",
-      })
+      },
+      translation: PropertyTranslation({"imageUrl": "image.url", "imageCaption": "image.caption"}),
     );
 
     expect(content, {
       'title': 'Hello World',
       'summary': 'Basic App',
-      'image': {'url': 'https://www.example.com/image.jpg', 'caption': 'Sunset'}
+      'image': {'url': 'https://www.example.com/image.jpg', 'caption': 'Sunset'},
     });
   });
 
@@ -112,19 +85,12 @@ void main() {
       PropertyTransformer<Image?>("image"),
     ]);
 
-    final model = TestModel({
-        "title": "Mike",
-        "summary": "Jones",
-      }, translation: PropertyTranslation({
-        "image.url": "imageUrl",
-        "image.caption": "imageCaption",
-      })
+    final model = TestModel(
+      {"title": "Mike", "summary": "Jones"},
+      translation: PropertyTranslation({"image.url": "imageUrl", "image.caption": "imageCaption"}),
     );
 
-    expect(model, {
-      'title': 'Mike',
-      'summary': 'Jones',
-    });
+    expect(model, {'title': 'Mike', 'summary': 'Jones'});
   });
 
   test('Assert that errors are captured when data does not exist and the model is required', () {
@@ -134,53 +100,52 @@ void main() {
       PropertyTransformer<Image>("image"),
     ]);
 
-    final model = TestModel({
+    final model = TestModel(
+      {
         "title": "Mike",
         "summary": "Jones",
         // "imageUrl": "https://www.example.com/image.jpg",
         // "imageCaption": null,
-      }, translation: PropertyTranslation({
-        "imageUrl": "image.url",
-        "imageCaption": "image.caption",
-      })
+      },
+      translation: PropertyTranslation({"imageUrl": "image.url", "imageCaption": "image.caption"}),
     );
 
-    expect(model, {
-      'title': 'Mike',
-      'summary': 'Jones'
-    });
+    expect(model, {'title': 'Mike', 'summary': 'Jones'});
 
     expect(model.errors, {'image': ModelErrors.required});
   });
 
-  test('Assert that nested errors are captured when data partial data exists for a nullable model property, but required data is null', () {
-    Models.register<TestModel>(TestModel.new, const [
-      PropertyTransformer<String>("title"),
-      PropertyTransformer<String?>("summary"),
-      PropertyTransformer<Image?>("image"),
-    ]);
+  test(
+    'Assert that nested errors are captured when data partial data exists for a nullable model property, but required data is null',
+    () {
+      Models.register<TestModel>(TestModel.new, const [
+        PropertyTransformer<String>("title"),
+        PropertyTransformer<String?>("summary"),
+        PropertyTransformer<Image?>("image"),
+      ]);
 
-    final model = TestModel({
-        "title": "Mike",
-        "summary": "Jones",
-        // "imageUrl": "https://www.example.com/image.jpg",
-        "imageCaption": "Example Caption", // partial data
-      }, translation: PropertyTranslation({
-        "imageUrl": "image.url",
-        "imageCaption": "image.caption",
-      })
-    );
+      final model = TestModel(
+        {
+          "title": "Mike",
+          "summary": "Jones",
+          // "imageUrl": "https://www.example.com/image.jpg",
+          "imageCaption": "Example Caption", // partial data
+        },
+        translation: PropertyTranslation({
+          "imageUrl": "image.url",
+          "imageCaption": "image.caption",
+        }),
+      );
 
-    expect(model, {
-      'title': 'Mike',
-      'summary': 'Jones',
-      'image': {
-        'caption': 'Example Caption'
-      }
-    });
+      expect(model, {
+        'title': 'Mike',
+        'summary': 'Jones',
+        'image': {'caption': 'Example Caption'},
+      });
 
-    expect(model.errors, {'image.url': ModelErrors.required});
-  });
+      expect(model.errors, {'image.url': ModelErrors.required});
+    },
+  );
 
   test('Assert that a single unindexed model can be added to a list', () {
     Models.register<TestModel>(TestModel.new, const [
@@ -189,21 +154,25 @@ void main() {
       PropertyTransformer<List<Image>>("images"),
     ]);
 
-    final model = TestModel({
+    final model = TestModel(
+      {
         "title": "Mike",
         "summary": "Jones",
         "imageUrl": "https://www.example.com/image.jpg",
         "imageCaption": null, // partial data
-      }, translation: PropertyTranslation({
+      },
+      translation: PropertyTranslation({
         "imageUrl": "images.url",
         "imageCaption": "images.caption",
-      })
+      }),
     );
 
     expect(model, {
       'title': 'Mike',
       'summary': 'Jones',
-      'images': [{'url': 'https://www.example.com/image.jpg'}]
+      'images': [
+        {'url': 'https://www.example.com/image.jpg'},
+      ],
     });
 
     expect(model.errors, {});
@@ -216,18 +185,20 @@ void main() {
       PropertyTransformer<List<Image>>("images"),
     ]);
 
-    final model = TestModel({
+    final model = TestModel(
+      {
         "title": "Hello World",
         "summary": "Basic App",
         "primaryImageUrl": "https://www.example.com/image.jpg",
         "secondaryImageUrl": "https://www.example.com/image2.jpg",
         "secondaryImageCaption": "Secondary",
-      }, translation: PropertyTranslation({
+      },
+      translation: PropertyTranslation({
         "primaryImageUrl": "images.url",
         "primaryImageCaption": "images.caption",
         "secondaryImageUrl": "images.url",
         "secondaryImageCaption": "images.caption",
-      })
+      }),
     );
 
     expect(model, {
@@ -235,8 +206,8 @@ void main() {
       'summary': 'Basic App',
       'images': [
         {'url': 'https://www.example.com/image.jpg'},
-        {'url': 'https://www.example.com/image2.jpg', 'caption': 'Secondary'}
-      ]
+        {'url': 'https://www.example.com/image2.jpg', 'caption': 'Secondary'},
+      ],
     });
   });
 
@@ -247,25 +218,21 @@ void main() {
       PropertyTransformer<List<int>>("numbers"),
     ]);
 
-    final model = TestModel({
-        "firstName": "Mike",
-        "lastName": "Jones",
-        "num1": 1,
-        "num2": "2",
-        "num3": 3,
-      }, translation: PropertyTranslation({
+    final model = TestModel(
+      {"firstName": "Mike", "lastName": "Jones", "num1": 1, "num2": "2", "num3": 3},
+      translation: PropertyTranslation({
         "firstName": "first",
         "lastName": "last",
         "num1": "numbers",
         "num2": "numbers",
         "num3": "numbers",
-      })
+      }),
     );
 
     expect(model, {
       'first': 'Mike',
       'last': 'Jones',
-      'numbers': [1, 2, 3]
+      'numbers': [1, 2, 3],
     });
   });
 
@@ -276,27 +243,22 @@ void main() {
       PropertyTransformer<Set<int>>("numbers"),
     ]);
 
-    final model = TestModel({
-        "firstName": "Mike",
-        "lastName": "Jones",
-        "num1": 1,
-        "num2": "2",
-        "num3": 3,
-        "num4": 3,
-      }, translation: PropertyTranslation({
+    final model = TestModel(
+      {"firstName": "Mike", "lastName": "Jones", "num1": 1, "num2": "2", "num3": 3, "num4": 3},
+      translation: PropertyTranslation({
         "firstName": "first",
         "lastName": "last",
         "num1": "numbers",
         "num2": "numbers",
         "num3": "numbers",
         "num4": "numbers",
-      })
+      }),
     );
 
     expect(model, {
       'first': 'Mike',
       'last': 'Jones',
-      'numbers': [1, 2, 3]
+      'numbers': [1, 2, 3],
     });
   });
 
@@ -308,19 +270,15 @@ void main() {
     ]);
 
     final model = TestModel({
-        "firstName": "Mike",
-        "lastName": "Jones",
-        "numbers": ["1", "2", "3"]
-      }, translation: PropertyTranslation({
-        "firstName": "first",
-        "lastName": "last",
-      })
-    );
+      "firstName": "Mike",
+      "lastName": "Jones",
+      "numbers": ["1", "2", "3"],
+    }, translation: PropertyTranslation({"firstName": "first", "lastName": "last"}));
 
     expect(model, {
       'first': 'Mike',
       'last': 'Jones',
-      'numbers': [1, 2, 3]
+      'numbers': [1, 2, 3],
     });
   });
 
@@ -338,11 +296,8 @@ void main() {
         {"url": "https://www.example.com/image1.jpg", "caption": "#1"},
         {"url": "https://www.example.com/image2.jpg", "caption": "#2"},
         {"url": "https://www.example.com/image3.jpg", "caption": "#3"},
-      ]}, translation: PropertyTranslation({
-        "firstName": "first",
-        "lastName": "last",
-      })
-    );
+      ],
+    }, translation: PropertyTranslation({"firstName": "first", "lastName": "last"}));
 
     expect(model, {
       'first': 'Mike',
@@ -351,7 +306,7 @@ void main() {
         {'url': 'https://www.example.com/image1.jpg', 'caption': '#1'},
         {'url': 'https://www.example.com/image2.jpg', 'caption': '#2'},
         {"url": "https://www.example.com/image3.jpg", "caption": "#3"},
-      ]
+      ],
     });
   });
 
@@ -362,18 +317,21 @@ void main() {
       PropertyTransformer<List<Image>>("images"),
     ]);
 
-    final model = TestModel({
-      "firstName": "Mike",
-      "lastName": "Jones",
-      "myImages": [
-        {"url": "https://www.example.com/image1.jpg", "caption": "#1"},
-        {"url": "https://www.example.com/image2.jpg", "caption": "#2"},
-        {"url": "https://www.example.com/image3.jpg", "caption": "#3"},
-      ]}, translation: PropertyTranslation({
+    final model = TestModel(
+      {
+        "firstName": "Mike",
+        "lastName": "Jones",
+        "myImages": [
+          {"url": "https://www.example.com/image1.jpg", "caption": "#1"},
+          {"url": "https://www.example.com/image2.jpg", "caption": "#2"},
+          {"url": "https://www.example.com/image3.jpg", "caption": "#3"},
+        ],
+      },
+      translation: PropertyTranslation({
         "firstName": "first",
         "lastName": "last",
         "myImages": "images",
-      })
+      }),
     );
 
     expect(model, {
@@ -383,7 +341,7 @@ void main() {
         {'url': 'https://www.example.com/image1.jpg', 'caption': '#1'},
         {'url': 'https://www.example.com/image2.jpg', 'caption': '#2'},
         {"url": "https://www.example.com/image3.jpg", "caption": "#3"},
-      ]
+      ],
     });
   });
 
@@ -401,11 +359,8 @@ void main() {
         {"url": "https://www.example.com/image1.jpg", "caption": "#1"},
         {"url": "https://www.example.com/image2.jpg", "caption": "#2"},
         {"url": "https://www.example.com/image2.jpg", "caption": "#2"},
-      ]}, translation: PropertyTranslation({
-        "firstName": "first",
-        "lastName": "last",
-      })
-    );
+      ],
+    }, translation: PropertyTranslation({"firstName": "first", "lastName": "last"}));
 
     expect(model, {
       'first': 'Mike',
@@ -413,7 +368,7 @@ void main() {
       'images': {
         {'url': 'https://www.example.com/image1.jpg', 'caption': '#1'},
         {'url': 'https://www.example.com/image2.jpg', 'caption': '#2'},
-      }
+      },
     });
   });
 
@@ -424,19 +379,22 @@ void main() {
       PropertyTransformer<List<Image>>("images"),
     ]);
 
-    final model = TestModel({
-      "firstName": "Mike",
-      "lastName": "Jones",
-      "myImages": [
-        {"imageUrl": "https://www.example.com/image1.jpg", "imageCaption": "#1"},
-        {"imageUrl": "https://www.example.com/image2.jpg", "imageCaption": "#2"},
-      ]}, translation: PropertyTranslation({
+    final model = TestModel(
+      {
+        "firstName": "Mike",
+        "lastName": "Jones",
+        "myImages": [
+          {"imageUrl": "https://www.example.com/image1.jpg", "imageCaption": "#1"},
+          {"imageUrl": "https://www.example.com/image2.jpg", "imageCaption": "#2"},
+        ],
+      },
+      translation: PropertyTranslation({
         "firstName": "first",
         "lastName": "last",
         "myImages": "images",
         "myImages.imageUrl": "images.url",
         "myImages.imageCaption": "images.caption",
-      })
+      }),
     );
 
     expect(model, {
@@ -444,8 +402,8 @@ void main() {
       'last': 'Jones',
       'images': [
         {'url': 'https://www.example.com/image1.jpg', 'caption': '#1'},
-        {'url': 'https://www.example.com/image2.jpg', 'caption': '#2'}
-      ]
+        {'url': 'https://www.example.com/image2.jpg', 'caption': '#2'},
+      ],
     });
   });
 
@@ -456,30 +414,37 @@ void main() {
       PropertyTransformer<List<List<Image>>>("images"),
     ]);
 
-    final model = TestModel({
-      "firstName": "Mike",
-      "lastName": "Jones",
-      "myImages": [
-        {"imageUrl": "https://www.example.com/image1.jpg", "imageCaption": "#1"},
-        {"imageUrl": "https://www.example.com/image2.jpg", "imageCaption": "#2"},
-        {"imageUrl": "https://www.example.com/image3.jpg", "imageCaption": "#3"},
-      ]}, translation: PropertyTranslation({
+    final model = TestModel(
+      {
+        "firstName": "Mike",
+        "lastName": "Jones",
+        "myImages": [
+          {"imageUrl": "https://www.example.com/image1.jpg", "imageCaption": "#1"},
+          {"imageUrl": "https://www.example.com/image2.jpg", "imageCaption": "#2"},
+          {"imageUrl": "https://www.example.com/image3.jpg", "imageCaption": "#3"},
+        ],
+      },
+      translation: PropertyTranslation({
         "firstName": "first",
         "lastName": "last",
         "myImages[0].imageUrl": "images.url",
         "myImages[0].imageCaption": "images.caption",
         "myImages[2].imageUrl": "images.url",
         "myImages[2].imageCaption": "images.caption",
-      })
+      }),
     );
 
     expect(model, {
       'first': 'Mike',
       'last': 'Jones',
       'images': [
-        [{'url': 'https://www.example.com/image1.jpg', 'caption': '#1'}],
-        [{'url': 'https://www.example.com/image3.jpg', 'caption': '#3'}]
-      ]
+        [
+          {'url': 'https://www.example.com/image1.jpg', 'caption': '#1'},
+        ],
+        [
+          {'url': 'https://www.example.com/image3.jpg', 'caption': '#3'},
+        ],
+      ],
     });
   });
 
@@ -490,31 +455,39 @@ void main() {
       PropertyTransformer<List<List<Image>>>("images"),
     ]);
 
-    final model = TestModel({
+    final model = TestModel(
+      {
         "firstName": "Mike",
         "lastName": "Jones",
         "myImages": [
           {"imageUrl": "https://www.example.com/image1.jpg", "imageCaption": "#1"},
           {"imageUrl": "https://www.example.com/image2.jpg", "imageCaption": "#2"},
           {"imageUrl": "https://www.example.com/image3.jpg", "imageCaption": "#3"},
-        ]
-      }, translation: PropertyTranslation({
+        ],
+      },
+      translation: PropertyTranslation({
         "firstName": "first",
         "lastName": "last",
         "myImages": "images",
         "myImages.imageUrl": "images.url",
         "myImages.imageCaption": "images.caption",
-      })
+      }),
     );
 
     expect(model, {
       'first': 'Mike',
       'last': 'Jones',
       'images': [
-        [{'url': 'https://www.example.com/image1.jpg', 'caption': '#1'}],
-        [{'url': 'https://www.example.com/image2.jpg', 'caption': '#2'}],
-        [{'url': 'https://www.example.com/image3.jpg', 'caption': '#3'}],
-      ]
+        [
+          {'url': 'https://www.example.com/image1.jpg', 'caption': '#1'},
+        ],
+        [
+          {'url': 'https://www.example.com/image2.jpg', 'caption': '#2'},
+        ],
+        [
+          {'url': 'https://www.example.com/image3.jpg', 'caption': '#3'},
+        ],
+      ],
     });
   });
 
@@ -530,11 +503,8 @@ void main() {
         "firstName": "Mike",
         "lastName": "Jones",
         "status": "active",
-      }, translation: PropertyTranslation({
-        "firstName": "first",
-        "lastName": "last",
-      })),
-      exceptionStartsWith("Exception: Type converter function not registered for type 'Status'.")
+      }, translation: PropertyTranslation({"firstName": "first", "lastName": "last"})),
+      exceptionStartsWith("Exception: Type converter function not registered for type 'Status'."),
     );
   });
 
@@ -549,16 +519,9 @@ void main() {
       "firstName": "Mike",
       "lastName": "Jones",
       "status": Status.active,
-    }, translation: PropertyTranslation({
-      "firstName": "first",
-      "lastName": "last",
-    }));
+    }, translation: PropertyTranslation({"firstName": "first", "lastName": "last"}));
 
-    expect(model, {
-      'first': 'Mike',
-      'last': 'Jones',
-      'status': Status.active
-    });
+    expect(model, {'first': 'Mike', 'last': 'Jones', 'status': Status.active});
   });
 
   test('Assert default value is returned when the transformed value is null', () {
@@ -569,62 +532,46 @@ void main() {
     ]);
 
     final model = TestModel({
+      "firstName": "Mike",
+      "lastName": "Jones",
+    }, translation: PropertyTranslation({"firstName": "first", "lastName": "last"}));
+
+    expect(model, {'first': 'Mike', 'last': 'Jones', 'status': 'active'});
+  });
+
+  test(
+    'Assert default value is returned and no errors when non-nullable transformed value is null',
+    () {
+      Models.register<TestModel>(TestModel.new, const [
+        PropertyTransformer<String>("first"),
+        PropertyTransformer<String?>("last"),
+        PropertyTransformer<String>("status", defaultValue: "active"),
+      ]);
+
+      final model = TestModel({
         "firstName": "Mike",
         "lastName": "Jones",
-      }, translation: PropertyTranslation({
-        "firstName": "first",
-        "lastName": "last",
-      })
-    );
+      }, translation: PropertyTranslation({"firstName": "first", "lastName": "last"}));
 
-    expect(model, {
-      'first': 'Mike',
-      'last': 'Jones',
-      'status': 'active'
-    });
-  });
+      expect(model.errors, {});
+      expect(model, {'first': 'Mike', 'last': 'Jones', 'status': 'active'});
+    },
+  );
 
-  test('Assert default value is returned and no errors when non-nullable transformed value is null', () {
-    Models.register<TestModel>(TestModel.new, const [
-      PropertyTransformer<String>("first"),
-      PropertyTransformer<String?>("last"),
-      PropertyTransformer<String>("status", defaultValue: "active"),
-    ]);
+  test(
+    'Assert properties with same name in different objects are mapped correctly w/o translation',
+    () {
+      Models.register<TestModel>(TestModel.new, const [
+        PropertyTransformer<String>("title"),
+        PropertyTransformer<String?>("url"),
+        PropertyTransformer<Image>("image"),
+      ]);
 
-    final model = TestModel({
-        "firstName": "Mike",
-        "lastName": "Jones",
-      }, translation: PropertyTranslation({
-        "firstName": "first",
-        "lastName": "last",
-      })
-    );
+      final model = TestModel({"title": "Happy World", "url": "https://www.example.com"});
 
-    expect(model.errors, {});
-    expect(model, {
-      'first': 'Mike',
-      'last': 'Jones',
-      'status': 'active'
-    });
-  });
-
-  test('Assert properties with same name in different objects are mapped correctly w/o translation', () {
-    Models.register<TestModel>(TestModel.new, const [
-      PropertyTransformer<String>("title"),
-      PropertyTransformer<String?>("url"),
-      PropertyTransformer<Image>("image"),
-    ]);
-
-    final model = TestModel({
-      "title": "Happy World",
-      "url": "https://www.example.com",
-    });
-
-    expect(model, {
-      'title': 'Happy World',
-      'url': 'https://www.example.com',
-    });
-  });
+      expect(model, {'title': 'Happy World', 'url': 'https://www.example.com'});
+    },
+  );
 
   test('Assert immutable models', () {
     Models.register<TestModel>(TestModel.new, const [
@@ -632,17 +579,15 @@ void main() {
       PropertyTransformer<Image>("image"),
     ]);
 
-    final model = TestModel({
-        "title": "Happy World",
-        "url": "https://www.example.com",
-      }, translation: PropertyTranslation({
-        "url": "image.url"
-      }), immutable: true
+    final model = TestModel(
+      {"title": "Happy World", "url": "https://www.example.com"},
+      translation: PropertyTranslation({"url": "image.url"}),
+      immutable: true,
     );
 
     expect(model, {
       'title': 'Happy World',
-      'image': {'url': 'https://www.example.com'}
+      'image': {'url': 'https://www.example.com'},
     });
     expect(model.immutable, true);
     expect(model["image"].immutable, true);
@@ -654,17 +599,17 @@ void main() {
       PropertyTransformer<List<Image>>("images"),
     ]);
 
-    final model = TestModel({
-        "title": "Happy World",
-        "url": "https://www.example.com",
-      }, translation: PropertyTranslation({
-        "url": "images.url"
-      }), immutable: true
+    final model = TestModel(
+      {"title": "Happy World", "url": "https://www.example.com"},
+      translation: PropertyTranslation({"url": "images.url"}),
+      immutable: true,
     );
 
     expect(model, {
       'title': 'Happy World',
-      'images': [{'url': 'https://www.example.com'}]
+      'images': [
+        {'url': 'https://www.example.com'},
+      ],
     });
     expect(model.immutable, true);
     expect(model["images"][0].immutable, true);
@@ -682,17 +627,17 @@ void main() {
       PropertyTransformer<Set<Image>>("images"),
     ]);
 
-    final model = TestModel({
-        "title": "Happy World",
-        "url": "https://www.example.com",
-      }, translation: PropertyTranslation({
-        "url": "images.url"
-      }), immutable: true
+    final model = TestModel(
+      {"title": "Happy World", "url": "https://www.example.com"},
+      translation: PropertyTranslation({"url": "images.url"}),
+      immutable: true,
     );
 
     expect(model, {
       'title': 'Happy World',
-      'images': [{'url': 'https://www.example.com'}]
+      'images': [
+        {'url': 'https://www.example.com'},
+      ],
     });
     expect(model.immutable, true);
     expect(model["images"].elementAt(0).immutable, true);
@@ -710,15 +655,9 @@ void main() {
       PropertyTransformer("image"),
     ]);
 
-    final model = TestModel({
-      "title": "Happy World",
-      "image": "https://www.example.com",
-    });
+    final model = TestModel({"title": "Happy World", "image": "https://www.example.com"});
 
-    expect(model, {
-      'title': 'Happy World',
-      'image': 'https://www.example.com'
-    });
+    expect(model, {'title': 'Happy World', 'image': 'https://www.example.com'});
   });
 
   test('Assert dynamic property returns int when data is int', () {
@@ -727,15 +666,9 @@ void main() {
       PropertyTransformer("count"),
     ]);
 
-    final model = TestModel({
-      "title": "Happy World",
-      "count": 5,
-    });
+    final model = TestModel({"title": "Happy World", "count": 5});
 
-    expect(model, {
-      'title': 'Happy World',
-      'count': 5
-    });
+    expect(model, {'title': 'Happy World', 'count': 5});
   });
 
   test('Assert dynamic property returns whatever object is in the data', () {
@@ -745,15 +678,9 @@ void main() {
     ]);
 
     final something = Unregistered("a");
-    final model = TestModel({
-      "title": "Happy World",
-      "something": something,
-    });
+    final model = TestModel({"title": "Happy World", "something": something});
 
-    expect(model, {
-      'title': 'Happy World',
-      'something': something
-    });
+    expect(model, {'title': 'Happy World', 'something': something});
   });
 
   test('Assert simple map transformation', () {
@@ -764,15 +691,12 @@ void main() {
 
     final model = TestModel({
       "title": "Happy World",
-      "map": {
-        "a": "1",
-        "b": 2
-      }
+      "map": {"a": "1", "b": 2},
     });
 
     expect(model, {
       'title': 'Happy World',
-      'map': { "a": 1, "b": 2 }
+      'map': {"a": 1, "b": 2},
     });
   });
 
@@ -784,14 +708,12 @@ void main() {
 
     final model = TestModel({
       "title": "Happy World",
-      "list": [ "1", "2" ]
-    }, translation: PropertyTranslation({
-      "list": "map"
-    }));
+      "list": ["1", "2"],
+    }, translation: PropertyTranslation({"list": "map"}));
 
     expect(model, {
       'title': 'Happy World',
-      'map': { "0": 1, "1": 2 }
+      'map': {"0": 1, "1": 2},
     });
   });
 
@@ -804,20 +726,17 @@ void main() {
     final model = TestModel({
       "title": "Happy World",
       "list": [
-        { "imageUrl": "www.example.com/img1.png" },
-        { "imageUrl": "www.example.com/img2.png" }
-      ]
-    }, translation: PropertyTranslation({
-      "list": "map",
-      "list.imageUrl": "map.url",
-    }));
+        {"imageUrl": "www.example.com/img1.png"},
+        {"imageUrl": "www.example.com/img2.png"},
+      ],
+    }, translation: PropertyTranslation({"list": "map", "list.imageUrl": "map.url"}));
 
     expect(model, {
       'title': 'Happy World',
       'map': {
         'www.example.com/img1.png': {'url': 'www.example.com/img1.png'},
-        'www.example.com/img2.png': {'url': 'www.example.com/img2.png'}
-      }
+        'www.example.com/img2.png': {'url': 'www.example.com/img2.png'},
+      },
     });
   });
 
@@ -830,20 +749,17 @@ void main() {
     final model = TestModel({
       "title": "Happy World",
       "list": [
-        { "imageUrl": "www.example.com/img1.png" },
-        { "imageUrl": "www.example.com/img2.png" }
-      ]
-    }, translation: PropertyTranslation({
-      "list": "map",
-      "list.imageUrl": "map.url",
-    }));
+        {"imageUrl": "www.example.com/img1.png"},
+        {"imageUrl": "www.example.com/img2.png"},
+      ],
+    }, translation: PropertyTranslation({"list": "map", "list.imageUrl": "map.url"}));
 
     expect(model, {
       'title': 'Happy World',
       'map': {
         'www.example.com/img1.png': {'url': 'www.example.com/img1.png'},
-        'www.example.com/img2.png': {'url': 'www.example.com/img2.png'}
-      }
+        'www.example.com/img2.png': {'url': 'www.example.com/img2.png'},
+      },
     });
   });
 
@@ -853,18 +769,12 @@ void main() {
       PropertyTransformer<Image?>("image"),
     ]);
 
-    final model = TestModel({
-      "title": "Happy World",
-      "image": ""
-    });
+    final model = TestModel({"title": "Happy World", "image": ""});
 
-    expect(model, {
-      'title': 'Happy World',
-    });
+    expect(model, {'title': 'Happy World'});
   });
 
   test('Assert transform function defined in PropertyTransformer is called', () {
-
     String? upperCase(dynamic value) {
       if (value == null) return null;
       if (value is String) return value.toUpperCase();
@@ -876,21 +786,13 @@ void main() {
       const PropertyTransformer<String>("email"),
     ]);
 
-    final model = TestModel({
-      "name": "Mike",
-      "email": "mike@example.com",
-    });
+    final model = TestModel({"name": "Mike", "email": "mike@example.com"});
 
-    expect(model, {
-      'name': "MIKE",
-      'email': 'mike@example.com',
-    });
+    expect(model, {'name': "MIKE", 'email': 'mike@example.com'});
   });
 }
 
-enum Status {
-  active, inactive
-}
+enum Status { active, inactive }
 
 class TestModel extends Model {
   TestModel(super.data, {super.translation, super.immutable});
@@ -910,17 +812,8 @@ class Profile extends Model {
   String? get name => getValue("name");
   DateTime? get lastLogin => getValue("lastLogin");
 
-  Profile({
-    required String username,
-    required String email,
-    String? name,
-    DateTime? lastLogin,
-  }): super({
-    "username": username,
-    "email": email,
-    "name": name,
-    "lastLogin": lastLogin,
-  });
+  Profile({required String username, required String email, String? name, DateTime? lastLogin})
+    : super({"username": username, "email": email, "name": name, "lastLogin": lastLogin});
 
   Profile.import(super.data, {super.translation, super.immutable});
 }

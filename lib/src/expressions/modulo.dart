@@ -43,9 +43,11 @@ class ModuloExpression extends Expression<dynamic> {
 
     try {
       return leftValue % rightValue;
-    } catch(e) {
-      throw Exception("Modulo division is not applicable to types "
-          "'${leftValue.runtimeType}' and '${rightValue.runtimeType}'");
+    } catch (e) {
+      throw Exception(
+        "Modulo division is not applicable to types "
+        "'${leftValue.runtimeType}' and '${rightValue.runtimeType}'",
+      );
     }
   }
 }

@@ -2,58 +2,7 @@
 ///
 library;
 
-import 'package:intl/intl.dart';
-
-import 'converters.dart';
 import 'extensions.dart';
-
-/// Units of time used for duration formatting.
-///
-/// Each unit has a short [code] and its equivalent in [millis].
-enum DurationUnits {
-  days("d", 86400000),
-  hours("h", 3600000),
-  minutes("M", 60000),
-  seconds("s", 1000),
-  milliseconds("m", 1);
-
-  final String code;
-  final int millis;
-  const DurationUnits(this.code, this.millis);
-}
-
-/// Defines labels for formatting durations.
-///
-/// Provides human‑readable labels for each [DurationUnits].
-class DurationFormat {
-  final String days;
-  final String hours;
-  final String minutes;
-  final String seconds;
-  final String milliseconds;
-
-  const DurationFormat(
-    this.days,
-    this.hours,
-    this.minutes,
-    this.seconds,
-    this.milliseconds
-  );
-
-  /// Returns the label string corresponding to the given [unit].
-  String getLabel(DurationUnits unit) {
-    switch (unit) {
-      case DurationUnits.days: return days;
-      case DurationUnits.hours: return hours;
-      case DurationUnits.minutes: return minutes;
-      case DurationUnits.seconds: return seconds;
-      case DurationUnits.milliseconds: return milliseconds;
-    }
-  }
-}
-
-/// Default duration format with English labels.
-const defaultDurationFormat = DurationFormat(" d"," hr"," min"," sec"," ms");
 
 /// Performs a deep equality comparison between [obj1] and [obj2].
 ///
@@ -147,57 +96,10 @@ dynamic first(dynamic value) {
   if (value is List) return value.first;
   if (value is Map) return value.first();
   if (value is Set) return value.first;
-  throw Exception("Function 'first' is invalid for type "
-      "'${value.runtimeType}'. Valid types are List, Map, and Set.");
-}
-
-/// Formats a [DateTime] value using the given [format] pattern.
-///
-/// - Accepts `DateTime`, `int` (milliseconds since epoch), or `String`.
-/// - Returns `null` if [value] is `null`.
-/// - Uses [intl.DateFormat] for formatting.
-String? formatDateTime(String format, dynamic value) {
-  if (value == null) return null;
-  final dateTime = toDateTime(value);
-  return dateTime != null ? DateFormat(format).format(dateTime) : null;
-}
-
-/// Formats a [Duration] into a human‑readable string.
-///
-/// - [precision] determines the smallest unit to include (e.g., `"s"`, `"ms"`).
-/// - [format] provides labels; if `null`, outputs colon/dot‑delimited style.
-/// - Returns `null` if [value] is `null`.
-/// - Handles negative durations by prefixing with `-`.
-String? formatDuration(
-    Duration? value, [
-    String precision = "s",
-    DurationFormat? format = defaultDurationFormat
-]) {
-  if (value == null) return null;
-  String formatted = "";
-  int millis = value.inMilliseconds.abs();
-  for (final unit in DurationUnits.values) {
-    final isLast = unit.code == precision || unit.name == precision;
-    final unitCount = millis ~/ unit.millis;
-    millis = millis - (unitCount * unit.millis);
-    if (format == null) {
-      final isMillis = unit == DurationUnits.milliseconds;
-      final delimiter= isMillis ? "." : ":";
-      if (formatted.isNotEmpty) {
-        formatted += delimiter + "$unitCount".padLeft(isMillis ? 3 : 2, "0");
-      } else if (isLast) {
-        formatted += "0$delimiter${'$unitCount'.padLeft(isMillis ? 3 : 2, '0')}";
-      } else if (unitCount > 0) {
-        formatted += "$unitCount";
-      }
-    } else if (unitCount > 0 || isLast) {
-      final spacer = formatted.isNotEmpty ? " " : "";
-      final label = format.getLabel(unit);
-      formatted += "$spacer$unitCount$label";
-    }
-    if (isLast) break;
-  }
-  return value.isNegative ? "-$formatted" : formatted;
+  throw Exception(
+    "Function 'first' is invalid for type "
+    "'${value.runtimeType}'. Valid types are List, Map, and Set.",
+  );
 }
 
 /// Returns the last element of [value].
@@ -209,8 +111,10 @@ dynamic last(dynamic value) {
   if (value is List) return value.last;
   if (value is Map) return value.last();
   if (value is Set) return value.last;
-  throw Exception("Function 'last' is invalid for type "
-      "'${value.runtimeType}'. Valid types are List, Map, and Set.");
+  throw Exception(
+    "Function 'last' is invalid for type "
+    "'${value.runtimeType}'. Valid types are List, Map, and Set.",
+  );
 }
 
 /// Returns the length of [value].
@@ -222,8 +126,10 @@ int length(dynamic value) {
   if (value is List) return value.length;
   if (value is Map) return value.length;
   if (value is Set) return value.length;
-  throw Exception("Function 'length' is invalid for type "
-      "'${value.runtimeType}'. Valid types are String, List, Map, and Set.");
+  throw Exception(
+    "Function 'length' is invalid for type "
+    "'${value.runtimeType}'. Valid types are String, List, Map, and Set.",
+  );
 }
 
 /// Compares two maps [a] and [b] for shallow equality.
@@ -281,9 +187,7 @@ String? substring(String? value, int start, [int end = -1]) {
 /// - Removes a trailing `?` from the type’s string representation.
 String nonNullType(Type type) {
   final typeString = type.toString();
-  return typeString.endsWith("?")
-      ? typeString.substring(0, typeString.length - 1)
-      : typeString;
+  return typeString.endsWith("?") ? typeString.substring(0, typeString.length - 1) : typeString;
 }
 
 /// Returns the current UTC [DateTime].
@@ -296,7 +200,7 @@ DateTime now() => DateTime.now();
 
 /// Returns this DateTime value in the UTC time zone.
 ///
-/// Returns [this] if it is already in UTC.
+/// Returns `this` if it is already in UTC.
 /// Otherwise this method is equivalent to:
 ///
 /// ```dart template:expression

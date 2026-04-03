@@ -51,9 +51,11 @@ class SubtractionExpression extends Expression<dynamic> {
 
     try {
       return leftValue - rightValue;
-    } catch(e) {
-      throw Exception("Subtraction is not applicable to types "
-          "'${leftValue.runtimeType}' and '${rightValue.runtimeType}'");
+    } catch (e) {
+      throw Exception(
+        "Subtraction is not applicable to types "
+        "'${leftValue.runtimeType}' and '${rightValue.runtimeType}'",
+      );
     }
   }
 }

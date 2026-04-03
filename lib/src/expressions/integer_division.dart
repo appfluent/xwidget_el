@@ -44,9 +44,11 @@ class IntegerDivisionExpression extends Expression<dynamic> {
 
     try {
       return leftValue ~/ rightValue;
-    } catch(e) {
-      throw Exception("Integer division is not applicable to types "
-          "'${leftValue.runtimeType}' and '${rightValue.runtimeType}'");
+    } catch (e) {
+      throw Exception(
+        "Integer division is not applicable to types "
+        "'${leftValue.runtimeType}' and '${rightValue.runtimeType}'",
+      );
     }
   }
 }

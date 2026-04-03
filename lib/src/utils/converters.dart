@@ -9,10 +9,10 @@ import 'dart:ui';
 
 import 'parsers.dart';
 
- const millisDays = 86400000;
- const millisHours = 3600000;
- const millisMins = 60000;
- const millisSecs = 1000;
+const millisDays = 86400000;
+const millisHours = 3600000;
+const millisMins = 60000;
+const millisSecs = 1000;
 
 /// Converts a dynamic [value] to a [bool].
 ///
@@ -23,14 +23,9 @@ import 'parsers.dart';
 ///   determines the result.
 /// - Returns `null` if [value] is `null`.
 /// - Throws [Exception] if conversion fails.
-bool? toBool(
-  dynamic value, [
-  Set<dynamic>? trueValues,
-  Set<dynamic>? falseValues
-]) {
+bool? toBool(dynamic value, [Set<dynamic>? trueValues, Set<dynamic>? falseValues]) {
   if (trueValues != null || falseValues != null) {
-    return trueValues?.contains(value) == true &&
-        falseValues?.contains(value) == false;
+    return trueValues?.contains(value) == true && falseValues?.contains(value) == false;
   }
   if (value == null) return null;
   if (value is bool) return value;
@@ -63,8 +58,10 @@ DateTime? toDateTime(dynamic value) {
   if (value is DateTime) return value;
   if (value is int) return DateTime.fromMillisecondsSinceEpoch(value);
   if (value is String) return parseDateTime(value);
-  throw Exception("Invalid DateTime: value=$value, "
-      "type=${value.runtimeType}");
+  throw Exception(
+    "Invalid DateTime: value=$value, "
+    "type=${value.runtimeType}",
+  );
 }
 
 /// Converts a dynamic [value] to an integer representing days.
@@ -110,14 +107,19 @@ Duration? toDuration(dynamic value, [String? intUnit]) {
   if (value is int) {
     switch (intUnit) {
       case "d":
-      case "days": return Duration(days: value);
+      case "days":
+        return Duration(days: value);
       case "h":
-      case "hours": return Duration(hours: value);
+      case "hours":
+        return Duration(hours: value);
       case "M":
-      case "minutes": return Duration(minutes: value);
+      case "minutes":
+        return Duration(minutes: value);
       case "s":
-      case "seconds": return Duration(seconds: value);
-      default: return Duration(milliseconds: value);
+      case "seconds":
+        return Duration(seconds: value);
+      default:
+        return Duration(milliseconds: value);
     }
   }
   throw Exception("Invalid duration format: $value");
@@ -132,8 +134,10 @@ T? toEnum<T extends Enum>(dynamic value, List<T> values) {
   if (value == null) return null;
   if (value is T) return value;
   if (value is String) return parseEnum(values, value);
-  throw Exception("Enum $T doesn't contain the value '$value'. "
-      "Valid values are ${values.asNameMap().keys}");
+  throw Exception(
+    "Enum $T doesn't contain the value '$value'. "
+    "Valid values are ${values.asNameMap().keys}",
+  );
 }
 
 /// Converts a dynamic [value] to an integer representing hours.
@@ -225,10 +229,7 @@ int? toSeconds(dynamic value) {
 String? toString(dynamic value) {
   if (value == null) return null;
   if (value is Color) {
-    return "0x${value.toARGB32()
-        .toRadixString(16)
-        .toUpperCase()
-        .padLeft(8, "0")}";
+    return "0x${value.toARGB32().toRadixString(16).toUpperCase().padLeft(8, "0")}";
   }
   return value.toString();
 }

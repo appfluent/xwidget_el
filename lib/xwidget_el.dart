@@ -1,5 +1,6 @@
 library;
 
+export 'src/expressions/dynamic_function.dart' show registerFunction;
 export 'src/expressions/expression.dart';
 export 'src/utils/converters.dart';
 export 'src/utils/extensions.dart';

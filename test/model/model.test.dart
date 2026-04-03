@@ -1,9 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:xwidget_el/xwidget_el.dart';
 
-
 void main() {
-
   setUpAll(() {
     Models.register<TestModel>(TestModel.new, const [
       PropertyTransformer<String>("key", isKey: true),
@@ -12,19 +10,13 @@ void main() {
   });
 
   test('Assert import without translation', () {
-    final model1 = TestModel.keyedInstance("t1", {
-      "key": "t1",
-      "name": "t1"
-    });
-    final model2 = TestModel.keyedInstance("t1", {
-      "key": "t1",
-      "name": "t2"
-    });
+    final model1 = TestModel.keyedInstance("t1", {"key": "t1", "name": "t1"});
+    final model2 = TestModel.keyedInstance("t1", {"key": "t1", "name": "t2"});
 
     expect(
-        identical(model1, model2),
-        true,
-        reason: "Expected model1 and model2 to be the same object, aka identical"
+      identical(model1, model2),
+      true,
+      reason: "Expected model1 and model2 to be the same object, aka identical",
     );
   });
 }
@@ -35,23 +27,20 @@ class TestModel extends Model {
   factory TestModel.keyedInstance(
     String keyProperty, [
     Map<String, dynamic>? data,
-    PropertyTranslation? translation
+    PropertyTranslation? translation,
   ]) {
     return Model.keyedInstance<TestModel>(
       data: data,
       factory: TestModel.new,
-      translation: translation
+      translation: translation,
     );
   }
 
-  factory TestModel.singleInstance([
-    Map<String, dynamic>? data,
-    PropertyTranslation? translation
-  ]) {
+  factory TestModel.singleInstance([Map<String, dynamic>? data, PropertyTranslation? translation]) {
     return Model.singleInstance<TestModel>(
       data: data,
       factory: TestModel.new,
-      translation: translation
+      translation: translation,
     );
   }
 }

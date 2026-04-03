@@ -17,8 +17,10 @@ bool contains(dynamic value, dynamic searchValue) {
   if (value is String) return value.contains(searchValue.toString());
   if (value is List) return value.contains(searchValue);
   if (value is Set) return value.contains(searchValue);
-  throw Exception("Invalid type '${value.runtimeType}' for 'contains' "
-      "function. Valid types are String, List and Set.");
+  throw Exception(
+    "Invalid type '${value.runtimeType}' for 'contains' "
+    "function. Valid types are String, List and Set.",
+  );
 }
 
 /// Returns `true` if [map] contains the given [searchKey].

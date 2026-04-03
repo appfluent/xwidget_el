@@ -7,9 +7,7 @@ import 'package:xwidget_el/src/expressions/multiplication.dart';
 import 'package:xwidget_el/src/expressions/subtraction.dart';
 import 'package:xwidget_el/xwidget_el.dart';
 
-
 void main() {
-
   // addition
   final dependencies = Dependencies();
 
@@ -164,9 +162,7 @@ class Arithmetic {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Arithmetic &&
-          runtimeType == other.runtimeType &&
-          value == other.value;
+      other is Arithmetic && runtimeType == other.runtimeType && value == other.value;
 
   @override
   int get hashCode => value.hashCode;

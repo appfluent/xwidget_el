@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 extension MapExt<K, V> on Map<K, V> {
-
   /// Returns the value for [key] as a string.
   ///
   /// - If the key exists, its value is converted with `toString()`.
@@ -74,7 +73,6 @@ extension MapExt<K, V> on Map<K, V> {
 }
 
 extension ListExt<E> on List<E> {
-
   /// Adds [value] to the list if it is not `null`.
   void addIfNotNull(E? value) {
     if (value != null) {
@@ -104,9 +102,7 @@ extension ListExt<E> on List<E> {
   List<E> immutable() {
     final list = [];
     for (final value in this) {
-      list.add((value is Map)
-          ? value.immutable()
-          : ((value is List) ? value.immutable() : value));
+      list.add((value is Map) ? value.immutable() : ((value is List) ? value.immutable() : value));
     }
     return List.unmodifiable(list);
   }
@@ -138,7 +134,6 @@ extension ListExt<E> on List<E> {
 }
 
 extension ColorExt on Color {
-
   /// Regular expression for stripping common color prefixes (`#`, `0x`).
   static RegExp colorPrefixRegExp = RegExp("^(#|0x)*");
 

@@ -24,25 +24,23 @@ void _autoRegisterType<T>() {
     if (!T.toString().contains("<")) {
       _registerType<T>();
     } else {
-      throw Exception("Unable to auto register type '$T', because it contains "
-          "generic type arguments. Each generic type must be registered "
-          "individually. Please register a transform function for each "
-          "generic type by calling XWidget.registerTransformFunction(). Note: "
-          "basic types such as String, int, bool, etc are registered by "
-          "default. You only need to register custom types. Call "
-          "XWidget.registerModel() to register model types.");
+      throw Exception(
+        "Unable to auto register type '$T', because it contains "
+        "generic type arguments. Each generic type must be registered "
+        "individually. Please register a transform function for each "
+        "generic type by calling XWidget.registerTransformFunction(). Note: "
+        "basic types such as String, int, bool, etc are registered by "
+        "default. You only need to register custom types. Call "
+        "XWidget.registerModel() to register model types.",
+      );
     }
   }
 }
 
-typedef ModelFactory<T extends Model> = T Function(
-  Map<String, dynamic> data, {
-  PropertyTranslation? translation,
-  bool? immutable
-});
+typedef ModelFactory<T extends Model> =
+    T Function(Map<String, dynamic> data, {PropertyTranslation? translation, bool? immutable});
 
 class Models {
-
   static final _factories = <String, ModelFactory>{};
   static final _transformers = <String, List<PropertyTransformer>>{};
   static final _keyTransformers = <String, List<PropertyTransformer>>{};
@@ -53,8 +51,10 @@ class Models {
     if (factory != null) {
       return factory as ModelFactory<T>;
     }
-    throw Exception("ModelFactory not registered for type '$key'. You can "
-        "register a ModelFactory by calling XWidget.registerModel().");
+    throw Exception(
+      "ModelFactory not registered for type '$key'. You can "
+      "register a ModelFactory by calling XWidget.registerModel().",
+    );
   }
 
   static List<PropertyTransformer> keyTransformersOf<T extends Model>() {
@@ -63,9 +63,11 @@ class Models {
     if (transformers != null) {
       return transformers;
     }
-    throw Exception("Key PropertyTransformers not registered for type '$key'. "
-        "You can register your model's PropertyTransformers by calling "
-        "XWidget.registerModel().");
+    throw Exception(
+      "Key PropertyTransformers not registered for type '$key'. "
+      "You can register your model's PropertyTransformers by calling "
+      "XWidget.registerModel().",
+    );
   }
 
   static List<PropertyTransformer>? getTransformers(Type type) {
@@ -78,7 +80,7 @@ class Models {
 
   static void register<T extends Model>(
     ModelFactory<T> factory,
-    List<PropertyTransformer>? transformers
+    List<PropertyTransformer>? transformers,
   ) {
     final key = nonNullType(T);
     _factories[key] = factory;
@@ -91,7 +93,6 @@ class Models {
 }
 
 class Model extends MapBase<String, dynamic> {
-
   // A static map to hold instances of subclasses, keyed by type & string value.
   static final Map<String, Map<String?, dynamic>> _instances = {};
 
@@ -101,11 +102,8 @@ class Model extends MapBase<String, dynamic> {
 
   Map<String, ModelErrors> get errors => _getErrors(this);
 
-  Model(
-    Map<String, dynamic> data, {
-    PropertyTranslation? translation,
-    bool? immutable,
-  }): immutable = immutable ?? false {
+  Model(Map<String, dynamic> data, {PropertyTranslation? translation, bool? immutable})
+    : immutable = immutable ?? false {
     if (data.isEmpty) {
       _data = {};
     } else {
@@ -118,7 +116,7 @@ class Model extends MapBase<String, dynamic> {
           final value = transformer.transform(
             data: data,
             translation: translation,
-            immutable: immutable
+            immutable: immutable,
           );
           if (value != null) {
             _data.setValue(transformer.property, value);
@@ -137,7 +135,7 @@ class Model extends MapBase<String, dynamic> {
     required ModelFactory<T> factory,
     Map<String, dynamic>? data,
     PropertyTranslation? translation,
-    bool? immutable
+    bool? immutable,
   }) {
     if (data == null || data.isEmpty) {
       return factory({});
@@ -149,14 +147,10 @@ class Model extends MapBase<String, dynamic> {
           factory: factory,
           data: data,
           translation: translation,
-          immutable: immutable
+          immutable: immutable,
         );
       } else {
-        return factory(
-          data,
-          translation: translation,
-          immutable: immutable
-        );
+        return factory(data, translation: translation, immutable: immutable);
       }
     }
   }
@@ -168,13 +162,13 @@ class Model extends MapBase<String, dynamic> {
     required ModelFactory<T> factory,
     Map<String, dynamic>? data,
     PropertyTranslation? translation,
-    bool? immutable
+    bool? immutable,
   }) {
     return _getInstance(
       data: data,
       factory: factory,
       translation: translation,
-      immutable: immutable
+      immutable: immutable,
     );
   }
 
@@ -207,7 +201,7 @@ class Model extends MapBase<String, dynamic> {
     Map<String, dynamic>? data,
     PropertyTranslation? translation,
     Map<String, TypeConverter>? functions,
-    bool? immutable
+    bool? immutable,
   }) {
     final type = nonNullType(T);
 
@@ -218,14 +212,14 @@ class Model extends MapBase<String, dynamic> {
     return _instances[type]![key] ??= factory(
       data ?? {},
       translation: translation,
-      immutable: immutable
+      immutable: immutable,
     );
   }
 
   static String? _getModelKey(
     Type type,
     Map<String, dynamic> data, [
-    PropertyTranslation? translation
+    PropertyTranslation? translation,
   ]) {
     final keys = [];
     final transformers = Models.getKeyTransformers(type);
@@ -301,8 +295,10 @@ class Model extends MapBase<String, dynamic> {
     return prefix.isNotEmpty
         ? errors.map((key, value) {
             final separator =
-              (key.startsWith("[") || key.startsWith("{")) &&
-              (prefix.endsWith("]") || prefix.endsWith("}")) ? "" : ".";
+                (key.startsWith("[") || key.startsWith("{")) &&
+                    (prefix.endsWith("]") || prefix.endsWith("}"))
+                ? ""
+                : ".";
             return MapEntry("$prefix$separator$key", value);
           })
         : errors;
@@ -316,8 +312,7 @@ class Model extends MapBase<String, dynamic> {
 /// unintentionally.
 ///
 /// Additionally, instances can keep track of ownership and if there are any
-/// attached listeners. This is used by [ValueListener] widget to determine
-/// if and when to cleanup resources.
+/// attached listeners.
 class ModelValueNotifier extends ValueNotifier {
   Key? _ownerKey;
   bool _hasNoListeners = false;
@@ -372,6 +367,4 @@ class ModelValueNotifier extends ValueNotifier {
   }
 }
 
-enum ModelErrors {
-  required;
-}
+enum ModelErrors { required }
