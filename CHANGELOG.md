@@ -1,3 +1,27 @@
+## 0.5.0
+
+### Added
+
+- **Custom instance method dispatch** — `registerMethodResolver(resolver)` allows registering resolvers that handle instance method calls on custom types. Resolvers run after built-in instance methods in [getDynamicFunctionOn], in registration order; the first non-null result wins.
+- **Expanded `toDuration` int unit aliases** — When converting an `int` to a `Duration`, `intUnit` now accepts long-form aliases for every unit:
+  - days: `d`, `day`, `days`
+  - hours: `h`, `hour`, `hours`
+  - minutes: `M`, `min`, `mins`, `minutes`
+  - seconds: `s`, `sec`, `secs`, `seconds`
+  - milliseconds: `ms`, `milli`, `millis`, `milliseconds`
+
+  Defaults to milliseconds when `intUnit` is omitted or `null`.
+- **Expanded `parseDuration` string unit aliases** — String parsing now accepts `sec`/`secs` for seconds, `minutes` for minutes, and `hours` for hours, alongside the existing short forms.
+
+### Fixed
+
+- **`entries` instance function on Map** — `case "entries"` in `getDynamicFunctionOn` was returning the iterable directly instead of a closure, causing `Function.apply` to throw on invocation. Now wrapped consistently with `keys` and `values`.
+- **`toDuration` no longer silently falls through to milliseconds** — Previously, an unrecognized `intUnit` produced a millisecond-based `Duration` due to default fall-through. Unrecognized units now throw an exception.
+
+### Tests
+
+- Completed test coverage for static and instance dynamic EL functions, including converters, validators, formatters, set operations, `isInfinite`/`isNaN`, `lastIndexOf`, `replaceRange`, and the new `entries` and `registerMethodResolver` paths.
+
 ## 0.4.0
 
 ### Added

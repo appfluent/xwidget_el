@@ -11,9 +11,42 @@ import 'expression.dart';
 
 final _log = Logger("DynamicFunction");
 final _registeredFunctions = <String, Function>{};
+final _registeredMethodResolvers = <InstanceMethodResolver>[];
 
+/// Resolves a method [name] on a [source] object to a callable [Function].
+///
+/// Returns `null` to defer resolution to other registered resolvers.
+typedef InstanceMethodResolver = Function? Function(String name, dynamic source);
+
+/// Registers a global custom [func] under [name], making it callable from any
+/// EL expression as a top-level function (e.g., `${myFunc(arg)}`).
+///
+/// Resolution order in [getDynamicFunction]: built-in functions take priority,
+/// then registered functions, then [Dependencies] entries. Re-registering the
+/// same [name] replaces the previous function.
+///
+/// Functions accept positional arguments only; named parameters are not
+/// supported by EL.
+///
+/// Example:
+/// ```dart
+/// registerFunction("formatCurrency", (dynamic value) => '\$${value}');
+/// ```
+/// ```xml
+/// <Text data="${formatCurrency(price)}"/>
+/// ```
 void registerFunction(String name, Function func) {
   _registeredFunctions[name] = func;
+}
+
+/// Registers a resolver for instance method dispatch on custom types.
+///
+/// Resolvers run inside [getDynamicFunctionOn] after the built-in switch falls
+/// through, in registration order. The first resolver that returns a non-null
+/// [Function] wins. Built-in instance methods always take priority over
+/// registered resolvers.
+void registerMethodResolver(InstanceMethodResolver resolver) {
+  _registeredMethodResolvers.add(resolver);
 }
 
 /// Resolves a dynamic function by [name] from the global registry or [dependencies].
@@ -225,7 +258,7 @@ Function getDynamicFunctionOn(String name, dynamic source) {
       case "endsWith":
         return source.endsWith;
       case "entries":
-        return source.entries;
+        return () => source.entries;
       case "first":
         return () => source.first;
       case "floor":
@@ -314,6 +347,11 @@ Function getDynamicFunctionOn(String name, dynamic source) {
         return source.union;
       case "values":
         return () => source.values;
+    }
+    // Fall through to registered resolvers for custom types
+    for (final resolver in _registeredMethodResolvers) {
+      final func = resolver(name, source);
+      if (func != null) return func;
     }
   }
   throw Exception("Function '$name' not found.");

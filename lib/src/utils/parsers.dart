@@ -86,39 +86,38 @@ double? parseDouble(String? value) {
 /// - Returns `null` if [value] is `null` or empty.
 /// - Throws [Exception] if the string is not valid.
 Duration? parseDuration(String? value) {
-  if (value != null && value.isNotEmpty) {
-    final match = _parseDurationRegExp.firstMatch(value);
-    if (match != null) {
-      final digits = int.parse(match.group(1)!);
-      final unit = match.group(2);
-      switch (unit) {
-        case "ms":
-          return Duration(milliseconds: digits);
-        case "s":
-          return Duration(seconds: digits);
-        case "m":
-          return Duration(minutes: digits);
-        case "min":
-          return Duration(minutes: digits);
-        case "mins":
-          return Duration(minutes: digits);
-        case "h":
-          return Duration(hours: digits);
-        case "hr":
-          return Duration(hours: digits);
-        case "hrs":
-          return Duration(hours: digits);
-        case "d":
-          return Duration(days: digits);
-        case "day":
-          return Duration(days: digits);
-        case "days":
-          return Duration(days: digits);
-      }
-    }
-    throw Exception("Problem parsing Duration value: $value");
+  if (value == null || value.isEmpty) return null;
+
+  final match = _parseDurationRegExp.firstMatch(value);
+  final digits = match != null ? int.parse(match.group(1)!) : null;
+  switch (match?.group(2)) {
+    case "ms":
+    case "milli":
+    case "millis":
+    case "milliseconds":
+      return Duration(milliseconds: digits!);
+    case "s":
+    case "sec":
+    case "secs":
+    case "seconds":
+      return Duration(seconds: digits!);
+    case "m":
+    case "min":
+    case "mins":
+    case "minutes":
+      return Duration(minutes: digits!);
+    case "h":
+    case "hr":
+    case "hrs":
+    case "hour":
+    case "hours":
+      return Duration(hours: digits!);
+    case "d":
+    case "day":
+    case "days":
+      return Duration(days: digits!);
   }
-  return null;
+  throw Exception("Problem parsing Duration value: $value");
 }
 
 /// Parses a string into an enum constant of type [T].

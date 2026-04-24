@@ -95,30 +95,46 @@ double? toDouble(dynamic value) {
 
 /// Converts a dynamic [value] to a [Duration].
 ///
-/// - Accepts `Duration`, `String` (parsed via [parseDuration]), or `int`.
-/// - If [intUnit] is provided, interprets the integer as days (`d`), hours (`h`),
-///   minutes (`M`), or seconds (`s`). Defaults to milliseconds.
+/// - Accepts `Duration` (returned as-is), `String` (parsed via [parseDuration]),
+///   or `int` paired with [intUnit].
+/// - When [value] is an `int`, [intUnit] selects the time unit. Defaults to
+///   milliseconds when omitted or `null`. Accepts:
+///   - days: `d`, `day`, `days`
+///   - hours: `h`, `hour`, `hours`
+///   - minutes: `M`, `min`, `mins`, `minutes`
+///   - seconds: `s`, `sec`, `secs`, `seconds`
+///   - milliseconds: `ms`, `milli`, `millis`, `milliseconds`
 /// - Returns `null` if [value] is `null`.
-/// - Throws [Exception] if conversion fails.
+/// - Throws [Exception] if [value] is an unsupported type, or an `int` paired
+///   with an unrecognized [intUnit].
 Duration? toDuration(dynamic value, [String? intUnit]) {
   if (value == null) return null;
   if (value is Duration) return value;
   if (value is String) return parseDuration(value);
   if (value is int) {
-    switch (intUnit) {
+    switch (intUnit ?? "ms") {
       case "d":
+      case "day":
       case "days":
         return Duration(days: value);
       case "h":
+      case "hour":
       case "hours":
         return Duration(hours: value);
       case "M":
+      case "min":
+      case "mins":
       case "minutes":
         return Duration(minutes: value);
       case "s":
+      case "sec":
+      case "secs":
       case "seconds":
         return Duration(seconds: value);
-      default:
+      case "ms":
+      case "milli":
+      case "millis":
+      case "milliseconds":
         return Duration(milliseconds: value);
     }
   }
