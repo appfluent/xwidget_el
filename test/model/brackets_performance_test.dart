@@ -9,9 +9,11 @@ void main() {
       data.setValue("topicsFollowed.top_news", true);
     }
     final millis = DateTime.now().millisecondsSinceEpoch - start;
-    expect(millis, {
+    expect(data, {
       'topicsFollowed': {'top_news': true},
     });
+    // loose bound: catches pathological regressions, not machine variance
+    expect(millis, lessThan(30000));
   });
 
   test('Assert getValue is fast', () {
@@ -22,8 +24,8 @@ void main() {
       data.getValue("topicsFollowed.top_news.fun.fun");
     }
     final millis = DateTime.now().millisecondsSinceEpoch - start;
-    expect(millis, {
-      'topicsFollowed': {'top_news': true},
-    });
+    expect(data.getValue("topicsFollowed.top_news.fun.fun"), true);
+    // loose bound: catches pathological regressions, not machine variance
+    expect(millis, lessThan(30000));
   });
 }

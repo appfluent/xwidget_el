@@ -4,6 +4,8 @@ import 'package:xwidget_el/src/model/brackets.dart';
 import 'package:xwidget_el/src/model/model.dart';
 import 'package:xwidget_el/src/parser.dart';
 
+import 'testing_utils.dart';
+
 void main() {
   final parser = ELParser();
   final dependencies = Dependencies({
@@ -41,8 +43,10 @@ void main() {
 
   test('Assert error global reference parsing', () {
     // this is supposed to fail because 123 is not a valid identifier
-    final result = parser.parse('global.users[indexes[2]].123.name');
-    expect(result.value.evaluate(dependencies), "Sally");
+    expect(
+      () => parser.parse('global.users[indexes[2]].123.name'),
+      exceptionStartsWith("Exception: Invalid syntax"),
+    );
   });
 
   test('Assert reference parsing', () {

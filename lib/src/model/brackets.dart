@@ -1,13 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:xwidget_el/src/utils/extensions.dart';
 
-import '../utils/validators.dart';
 import 'model.dart';
+import 'property_resolver.dart';
 
 /// A simple utility for retrieving data using dot/bracket notation. As long as
 /// your data follows a simple convention you can use a simplified dot/bracket
 /// notation to locate any piece of data in your hierarchy. Searches return null
-/// if no data is found or if the path string is invalid.
+/// if no data is found. Segments that aren't Map keys or List indexes resolve as
+/// built-in or registered properties (e.g. `tags.length`); a name that resolves
+/// nowhere reads as null on a Map and throws for other collection types.
 ///
 /// 1. Objects must be represented as `<String, dynamic>` maps.
 /// 2. Array data must use `<dynamic>` lists.
@@ -219,9 +221,13 @@ class PathResolution {
   }
 
   static dynamic _readValue(dynamic currPath, dynamic collection) {
-    if (isEmpty(collection)) {
+    // only null short-circuits — empty collections must still dispatch below
+    // so that properties (e.g. length on an empty List) and invalid access
+    // resolve the same way regardless of whether the collection has items
+    if (collection == null) {
       return null;
-    } else if (collection is MapEntry) {
+    }
+    if (collection is MapEntry) {
       if (currPath == "_key") {
         return collection.key;
       } else if (currPath == "_value") {
@@ -229,26 +235,42 @@ class PathResolution {
       } else {
         return _readValue(currPath, collection.value);
       }
-    } else if (currPath is int) {
+    }
+    if (currPath is int) {
       // currPath is an index value, get the item at that index location.
       if (currPath < 0 || currPath >= collection.length) {
         // index is out of range, so just return null
         return null;
-      } else {
-        if (collection is Iterable) {
-          return collection.elementAt(currPath);
-        } else if (collection is Map) {
-          return collection.entries.elementAt(currPath);
-        }
+      }
+      if (collection is Iterable) {
+        return collection.elementAt(currPath);
+      }
+      if (collection is Map) {
+        return collection.entries.elementAt(currPath);
       }
     } else if (collection is Map) {
-      return collection[currPath];
-    } else if (collection is Iterable) {
-      throw Exception(
-        "Unable to read value at index '$currPath' from "
-        "Iterable collection of type '${collection.runtimeType}'. The "
-        "index provided is not an int. Check your property paths.",
-      );
+      if (collection.containsKey(currPath)) {
+        return collection[currPath];
+      }
+      // a real key always wins; on a miss, try property resolution
+      final resolution = resolveProperty(currPath, collection);
+      if (resolution != null) {
+        return resolution.value;
+      }
+      // unknown name on a Map stays lenient — searches return null
+      return null;
+    } else if (currPath is String) {
+      final resolution = resolveProperty(currPath, collection);
+      if (resolution != null) {
+        return resolution.value;
+      }
+      if (collection is Iterable) {
+        throw Exception(
+          "Unable to read value at index '$currPath' from "
+          "Iterable collection of type '${collection.runtimeType}'. The "
+          "index provided is not an int. Check your property paths.",
+        );
+      }
     }
     throw Exception(
       "Path '$currPath' references an unsupported collection of "

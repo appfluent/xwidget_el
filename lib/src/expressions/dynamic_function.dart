@@ -291,8 +291,6 @@ Function getDynamicFunctionOn(String name, dynamic source) {
         return source.lastIndexOf;
       case "length":
         return () => source.length;
-      case "matches":
-        return source.matches;
       case "padLeft":
         return source.padLeft;
       case "padRight":

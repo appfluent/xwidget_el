@@ -1,6 +1,35 @@
-## 0.5.0
+## 0.6.0
 
-### Added
+- **Dart-like property access in paths** — a path segment that isn't a Map key or List
+  index now resolves core Dart getters on the value: `length`/`isEmpty`/`isNotEmpty` on
+  String, List, Set, and Map; `first`/`last` on iterables (Dart semantics — `StateError`
+  on empty); `keys`/`values`/`entries` on Maps (a real key always wins); numeric flags
+  (`isEven`, `isOdd`, `isNegative`, `isNaN`, `isFinite`, `isInfinite`, `sign`); and
+  common `Duration`/`DateTime` getters. Works in EL (`${tags.length}`) and Dart
+  (`data.getValue("tags.length")`); property access on a null chain remains null.
+- **Custom property resolution** — `registerPropertyResolver(resolver)` adds parenless
+  property support for custom types, mirroring `registerMethodResolver`. Resolvers run
+  after the built-in core properties, in registration order; the first non-null
+  [PropertyResolution] wins.
+- **Removed the `matches` instance-method dispatch** — `getDynamicFunctionOn` no longer
+  resolves `matches` on a value. The case returned a member tear-off that no Dart type
+  provides, so every invocation threw `NoSuchMethodError`; no working code could have
+  depended on it. The static `matches(value, regExp)` function (full-string match,
+  returns `bool`) is unchanged.
+- **`registerMethodResolver` is now exported** — the package barrel only exported
+  `registerFunction`, so the custom method dispatch added in 0.5.0 (and its
+  `InstanceMethodResolver` typedef) was unusable without a `src/` import.
+- **Invalid access on empty collections now fails loudly** — Path resolution
+  short-circuited on *any* empty collection, so reading a string key from an empty
+  `List` returned `null` and writing one silently dropped the write, while the same
+  misuse on a non-empty `List` threw. Only `null` collections short-circuit now;
+  empty collections dispatch by type, so a name that doesn't resolve to a property
+  on a `List`/`Set` throws the same descriptive exception regardless of whether the
+  collection has items.
+- Minimum Dart SDK is now 3.9; minimum Flutter is 3.35, aligning with the rest of the
+  XWidget 0.6 suite.
+
+## 0.5.0
 
 - **Custom instance method dispatch** — `registerMethodResolver(resolver)` allows registering resolvers that handle instance method calls on custom types. Resolvers run after built-in instance methods in [getDynamicFunctionOn], in registration order; the first non-null result wins.
 - **Expanded `toDuration` int unit aliases** — When converting an `int` to a `Duration`, `intUnit` now accepts long-form aliases for every unit:
@@ -12,19 +41,11 @@
 
   Defaults to milliseconds when `intUnit` is omitted or `null`.
 - **Expanded `parseDuration` string unit aliases** — String parsing now accepts `sec`/`secs` for seconds, `minutes` for minutes, and `hours` for hours, alongside the existing short forms.
-
-### Fixed
-
-- **`entries` instance function on Map** — `case "entries"` in `getDynamicFunctionOn` was returning the iterable directly instead of a closure, causing `Function.apply` to throw on invocation. Now wrapped consistently with `keys` and `values`.
+- **Fixed the `entries` instance function on Map** — `case "entries"` in `getDynamicFunctionOn` was returning the iterable directly instead of a closure, causing `Function.apply` to throw on invocation. Now wrapped consistently with `keys` and `values`.
 - **`toDuration` no longer silently falls through to milliseconds** — Previously, an unrecognized `intUnit` produced a millisecond-based `Duration` due to default fall-through. Unrecognized units now throw an exception.
-
-### Tests
-
 - Completed test coverage for static and instance dynamic EL functions, including converters, validators, formatters, set operations, `isInfinite`/`isNaN`, `lastIndexOf`, `replaceRange`, and the new `entries` and `registerMethodResolver` paths.
 
 ## 0.4.0
-
-### Added
 
 - **New EL formatter functions**
     - `formatNumber(value, pattern)` — ICU/intl number formatting with grouping, decimals, and currency support.
@@ -34,24 +55,15 @@
     - `formatOrdinal(value)` — English ordinal suffixes (1st, 2nd, 3rd, 4th).
     - `formatPlural(count, singular, plural)` — Count-aware label pluralization.
     - `formatElapsed(dateTime)` — Relative time strings ("5 minutes ago", "in 3 hours").
-
 - **New EL math functions**
     - `min(a, b)` — Returns the smaller of two comparable values.
     - `max(a, b)` — Returns the larger of two comparable values.
     - `clamp(value, lower, upper)` — Constrains a value to a range.
-
 - **New EL static functions**
     - `first(value)` — Returns the first element of a List, Set, or Map.
     - `last(value)` — Returns the last element of a List, Set, or Map.
-
 - **Custom function registration** — `registerFunction(name, func)` allows registering user-defined static EL functions at startup. Resolution order: built-in → registered → dependency.
-
-### Fixed
-
 - **Ternary expressions now accept dynamic conditions** — `ConditionalExpression` condition type widened from `Expression<bool>` to `Expression`, allowing function calls that return bool to be used directly as ternary conditions (e.g., `isAdmin() ? 'yes' : 'no'`). Non-bool conditions throw a clear runtime error.
-
-### Tests
-
 - Added 405 tests across 7 test files covering formatters, math, misc, converters, validators, dynamic functions, and conditional expressions.
 
 ## 0.3.1

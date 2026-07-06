@@ -1,6 +1,7 @@
 library;
 
-export 'src/expressions/dynamic_function.dart' show registerFunction;
+export 'src/expressions/dynamic_function.dart'
+    show registerFunction, registerMethodResolver, InstanceMethodResolver;
 export 'src/expressions/expression.dart';
 export 'src/utils/converters.dart';
 export 'src/utils/extensions.dart';
@@ -10,6 +11,7 @@ export 'src/utils/parsers.dart';
 export 'src/utils/validators.dart';
 export 'src/model/brackets.dart';
 export 'src/model/model.dart';
+export 'src/model/property_resolver.dart';
 
 export 'src/dependencies.dart';
 export 'src/grammar.dart';
