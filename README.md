@@ -24,7 +24,7 @@ function registration.
 - **Full Operator Support** — Arithmetic (`+`, `-`, `*`, `/`, `~/`, `%`), logical (`&&`, `||`, `!`), relational (`<`, `>`, `<=`, `>=`, `==`, `!=`), ternary (`? :`), and null-coalescing (`??`)
 - **50+ Built-in Functions** — Type conversions, string manipulation, collection queries, date/time formatting, math operations, and validators
 - **Instance Method Chaining** — Call methods directly on values: `${name.toUpperCase().trim()}`
-- **Dart-like Properties** — Parenless member access in paths: `${tags.length}`, `${cart.isEmpty}` — on built-in and custom types
+- **Dart-like Properties** — Access members directly in paths: `${tags.length}`, `${cart.isEmpty}` — on built-in and custom types
 - **Custom Functions** — Register your own functions on any `Dependencies` instance
 - **Null Safety** — Null-coalescing, null-safe property access, and null-checking functions built in
 - **Type-Aware Operations** — DateTime arithmetic, Duration math, Enum comparison, and automatic type coercion
@@ -68,7 +68,7 @@ Full documentation is available at **[docs.xwidget.dev](https://docs.xwidget.dev
 - [Expression Language Rules](https://docs.xwidget.dev/el/rules/) — Operator precedence and syntax
 - [Static Functions](https://docs.xwidget.dev/el/static_functions/) — Built-in functions reference
 - [Instance Functions](https://docs.xwidget.dev/el/instance_functions/) — Method chaining reference
-- [Properties](https://docs.xwidget.dev/el/properties/) — Parenless member access reference
+- [Properties](https://docs.xwidget.dev/el/properties/) — Property access reference
 - [Custom Functions](https://docs.xwidget.dev/el/custom_functions/) — Registering your own functions
 - [Core Classes](https://docs.xwidget.dev/el/core_classes/) — Dependencies, Model, and ELParser
 

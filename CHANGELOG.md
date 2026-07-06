@@ -7,8 +7,8 @@
   (`isEven`, `isOdd`, `isNegative`, `isNaN`, `isFinite`, `isInfinite`, `sign`); and
   common `Duration`/`DateTime` getters. Works in EL (`${tags.length}`) and Dart
   (`data.getValue("tags.length")`); property access on a null chain remains null.
-- **Custom property resolution** — `registerPropertyResolver(resolver)` adds parenless
-  property support for custom types, mirroring `registerMethodResolver`. Resolvers run
+- **Custom property resolution** — `registerPropertyResolver(resolver)` adds property
+  support for custom types, mirroring `registerMethodResolver`. Resolvers run
   after the built-in core properties, in registration order; the first non-null
   [PropertyResolution] wins.
 - **Removed the `matches` instance-method dispatch** — `getDynamicFunctionOn` no longer

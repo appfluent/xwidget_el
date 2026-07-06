@@ -18,7 +18,7 @@ final _registeredPropertyResolvers = <PropertyResolver>[];
 
 /// Registers a resolver for property access on custom types.
 ///
-/// Property access is parenless member resolution on path segments — e.g.
+/// Property access is direct member resolution on path segments — e.g.
 /// `${order.total}` in EL or `data.getValue("order.total")` in Dart — used
 /// when a segment is not a Map key or List index.
 ///
