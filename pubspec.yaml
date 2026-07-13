@@ -1,6 +1,6 @@
 name: xwidget_el
 description: A powerful expression language designed for evaluating expressions within a data model.
-version: 0.6.0
+version: 0.7.0
 repository: https://github.com/appfluent/xwidget_el
 issue_tracker: https://github.com/appfluent/xwidget_el/issues
 
@@ -35,4 +35,4 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   args: ^2.7.0
-  lints: ^5.0.0
+  lints: ^6.1.0

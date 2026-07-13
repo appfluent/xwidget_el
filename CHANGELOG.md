@@ -1,3 +1,19 @@
+## 0.7.0
+
+- Core property coverage is now **complete** for every supported type — the hand-written
+  resolver's surface is the contract the future generated resolver must reproduce, so
+  completeness is required for the 0.8 mechanism swap to be behavior-neutral. Added:
+  `codeUnits`/`runes` (String), `single`/`iterator` (Iterable), `reversed` (List),
+  `bitLength` (int), `inMicroseconds` (Duration), and `millisecond`/`microsecond`/
+  `microsecondsSinceEpoch`/`timeZoneName`/`timeZoneOffset` (DateTime). Policy: all public
+  instance getters except Object members; `single` follows Dart semantics (`StateError`
+  when unsatisfiable), consistent with `first`/`last`.
+- Added `Uri` to the core property types: `scheme`, `host`, `port`, `path`,
+  `pathSegments`, `query`, `queryParameters`, `queryParametersAll`, `fragment`,
+  `authority`, `userInfo`, `origin`, `data`, `isAbsolute`, and the `has*` flags.
+  `queryParameters`/`queryParametersAll` traverse as Maps
+  (`${link.queryParameters.id}`).
+
 ## 0.6.0
 
 - **Dart-like property access in paths** — a path segment that isn't a Map key or List
@@ -19,13 +35,6 @@
 - **`registerMethodResolver` is now exported** — the package barrel only exported
   `registerFunction`, so the custom method dispatch added in 0.5.0 (and its
   `InstanceMethodResolver` typedef) was unusable without a `src/` import.
-- **Invalid access on empty collections now fails loudly** — Path resolution
-  short-circuited on *any* empty collection, so reading a string key from an empty
-  `List` returned `null` and writing one silently dropped the write, while the same
-  misuse on a non-empty `List` threw. Only `null` collections short-circuit now;
-  empty collections dispatch by type, so a name that doesn't resolve to a property
-  on a `List`/`Set` throws the same descriptive exception regardless of whether the
-  collection has items.
 - Minimum Dart SDK is now 3.9; minimum Flutter is 3.35, aligning with the rest of the
   XWidget 0.6 suite.
 

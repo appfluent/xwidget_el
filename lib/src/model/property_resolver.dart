@@ -47,9 +47,11 @@ void registerPropertyResolver(PropertyResolver resolver) {
 /// when neither the built-in core properties nor any registered resolver
 /// recognizes it.
 ///
-/// Core properties cover the common Dart getters on String, Iterable, Map,
-/// num, int, Duration, and DateTime. `first`/`last` follow Dart semantics and
-/// throw [StateError] on an empty iterable.
+/// Core properties cover the complete public instance-getter surface
+/// (excluding Object members) of String, Iterable, List, Map, num, int,
+/// Duration, DateTime, and Uri — complete so the future generated resolver
+/// reproduces identical semantics. `first`/`last`/`single` follow Dart
+/// semantics and throw [StateError] when unsatisfiable.
 PropertyResolution? resolveProperty(String name, dynamic target) {
   final core = _resolveCoreProperty(name, target);
   if (core != null) return core;
@@ -65,12 +67,16 @@ PropertyResolution? _resolveCoreProperty(String name, dynamic target) {
   // please maintain alphabetical order within each type group
   if (target is String) {
     switch (name) {
+      case "codeUnits":
+        return PropertyResolution(target.codeUnits);
       case "isEmpty":
         return PropertyResolution(target.isEmpty);
       case "isNotEmpty":
         return PropertyResolution(target.isNotEmpty);
       case "length":
         return PropertyResolution(target.length);
+      case "runes":
+        return PropertyResolution(target.runes);
     }
   } else if (target is Map) {
     switch (name) {
@@ -88,6 +94,12 @@ PropertyResolution? _resolveCoreProperty(String name, dynamic target) {
         return PropertyResolution(target.values);
     }
   } else if (target is Iterable) {
+    if (target is List) {
+      switch (name) {
+        case "reversed":
+          return PropertyResolution(target.reversed);
+      }
+    }
     switch (name) {
       case "first":
         return PropertyResolution(target.first);
@@ -95,14 +107,20 @@ PropertyResolution? _resolveCoreProperty(String name, dynamic target) {
         return PropertyResolution(target.isEmpty);
       case "isNotEmpty":
         return PropertyResolution(target.isNotEmpty);
+      case "iterator":
+        return PropertyResolution(target.iterator);
       case "last":
         return PropertyResolution(target.last);
       case "length":
         return PropertyResolution(target.length);
+      case "single":
+        return PropertyResolution(target.single);
     }
   } else if (target is num) {
     if (target is int) {
       switch (name) {
+        case "bitLength":
+          return PropertyResolution(target.bitLength);
         case "isEven":
           return PropertyResolution(target.isEven);
         case "isOdd":
@@ -127,6 +145,8 @@ PropertyResolution? _resolveCoreProperty(String name, dynamic target) {
         return PropertyResolution(target.inDays);
       case "inHours":
         return PropertyResolution(target.inHours);
+      case "inMicroseconds":
+        return PropertyResolution(target.inMicroseconds);
       case "inMilliseconds":
         return PropertyResolution(target.inMilliseconds);
       case "inMinutes":
@@ -144,6 +164,12 @@ PropertyResolution? _resolveCoreProperty(String name, dynamic target) {
         return PropertyResolution(target.hour);
       case "isUtc":
         return PropertyResolution(target.isUtc);
+      case "microsecond":
+        return PropertyResolution(target.microsecond);
+      case "microsecondsSinceEpoch":
+        return PropertyResolution(target.microsecondsSinceEpoch);
+      case "millisecond":
+        return PropertyResolution(target.millisecond);
       case "millisecondsSinceEpoch":
         return PropertyResolution(target.millisecondsSinceEpoch);
       case "minute":
@@ -152,10 +178,59 @@ PropertyResolution? _resolveCoreProperty(String name, dynamic target) {
         return PropertyResolution(target.month);
       case "second":
         return PropertyResolution(target.second);
+      case "timeZoneName":
+        return PropertyResolution(target.timeZoneName);
+      case "timeZoneOffset":
+        return PropertyResolution(target.timeZoneOffset);
       case "weekday":
         return PropertyResolution(target.weekday);
       case "year":
         return PropertyResolution(target.year);
+    }
+  } else if (target is Uri) {
+    switch (name) {
+      case "authority":
+        return PropertyResolution(target.authority);
+      case "data":
+        return PropertyResolution(target.data);
+      case "fragment":
+        return PropertyResolution(target.fragment);
+      case "hasAbsolutePath":
+        return PropertyResolution(target.hasAbsolutePath);
+      case "hasAuthority":
+        return PropertyResolution(target.hasAuthority);
+      case "hasEmptyPath":
+        return PropertyResolution(target.hasEmptyPath);
+      case "hasFragment":
+        return PropertyResolution(target.hasFragment);
+      case "hasPort":
+        return PropertyResolution(target.hasPort);
+      case "hasQuery":
+        return PropertyResolution(target.hasQuery);
+      case "hasScheme":
+        return PropertyResolution(target.hasScheme);
+      case "host":
+        return PropertyResolution(target.host);
+      case "isAbsolute":
+        return PropertyResolution(target.isAbsolute);
+      case "origin":
+        return PropertyResolution(target.origin);
+      case "path":
+        return PropertyResolution(target.path);
+      case "pathSegments":
+        return PropertyResolution(target.pathSegments);
+      case "port":
+        return PropertyResolution(target.port);
+      case "query":
+        return PropertyResolution(target.query);
+      case "queryParameters":
+        return PropertyResolution(target.queryParameters);
+      case "queryParametersAll":
+        return PropertyResolution(target.queryParametersAll);
+      case "scheme":
+        return PropertyResolution(target.scheme);
+      case "userInfo":
+        return PropertyResolution(target.userInfo);
     }
   }
   return null;

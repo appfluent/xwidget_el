@@ -147,6 +147,89 @@ void main() {
     });
   });
 
+  group("slice-2 completeness", () {
+    test("String codeUnits and runes", () {
+      final data = <String, dynamic>{"name": "hi"};
+      expect(data.getValue("name.codeUnits"), [104, 105]);
+      expect((data.getValue("name.runes") as Runes).toList(), [104, 105]);
+    });
+
+    test("List reversed", () {
+      final data = <String, dynamic>{
+        "items": [1, 2, 3],
+      };
+      expect((data.getValue("items.reversed") as Iterable).toList(), [3, 2, 1]);
+    });
+
+    test("Iterable single follows Dart semantics", () {
+      final data = <String, dynamic>{
+        "one": [42],
+        "many": [1, 2],
+      };
+      expect(data.getValue("one.single"), 42);
+      expect(() => data.getValue("many.single"), throwsStateError);
+    });
+
+    test("int bitLength", () {
+      final data = <String, dynamic>{"n": 255};
+      expect(data.getValue("n.bitLength"), 8);
+    });
+
+    test("Duration inMicroseconds", () {
+      final data = <String, dynamic>{"d": const Duration(milliseconds: 2)};
+      expect(data.getValue("d.inMicroseconds"), 2000);
+    });
+
+    test("DateTime sub-second and timezone getters", () {
+      final data = <String, dynamic>{"t": DateTime.utc(2026, 7, 11, 1, 2, 3, 4, 5)};
+      expect(data.getValue("t.millisecond"), 4);
+      expect(data.getValue("t.microsecond"), 5);
+      expect(data.getValue("t.timeZoneName"), "UTC");
+      expect(data.getValue("t.timeZoneOffset"), Duration.zero);
+      expect(
+        data.getValue("t.microsecondsSinceEpoch"),
+        DateTime.utc(2026, 7, 11, 1, 2, 3, 4, 5).microsecondsSinceEpoch,
+      );
+    });
+  });
+
+  group("Uri properties", () {
+    final data = <String, dynamic>{
+      "link": Uri.parse("https://user@xwidget.dev:8443/a/b?x=1&x=2&y=3#frag"),
+    };
+
+    test("components", () {
+      expect(data.getValue("link.scheme"), "https");
+      expect(data.getValue("link.host"), "xwidget.dev");
+      expect(data.getValue("link.port"), 8443);
+      expect(data.getValue("link.path"), "/a/b");
+      expect(data.getValue("link.pathSegments"), ["a", "b"]);
+      expect(data.getValue("link.query"), "x=1&x=2&y=3");
+      expect(data.getValue("link.fragment"), "frag");
+      expect(data.getValue("link.userInfo"), "user");
+      expect(data.getValue("link.authority"), "user@xwidget.dev:8443");
+      expect(data.getValue("link.origin"), "https://xwidget.dev:8443");
+    });
+
+    test("query parameters traverse as Maps", () {
+      expect(data.getValue("link.queryParameters.y"), "3");
+      expect(data.getValue("link.queryParametersAll.x"), ["1", "2"]);
+    });
+
+    test("flags", () {
+      // isAbsolute is false: Dart defines absolute as scheme + NO fragment
+      expect(data.getValue("link.isAbsolute"), false);
+      expect(data.getValue("link.hasPort"), true);
+      expect(data.getValue("link.hasQuery"), true);
+      expect(data.getValue("link.hasFragment"), true);
+      expect(data.getValue("link.hasScheme"), true);
+      expect(data.getValue("link.hasAuthority"), true);
+      expect(data.getValue("link.hasEmptyPath"), false);
+      expect(data.getValue("link.hasAbsolutePath"), true);
+      expect(data.getValue("link.data"), null);
+    });
+  });
+
   group("path traversal", () {
     test("nested path ending in a property", () {
       final data = <String, dynamic>{
